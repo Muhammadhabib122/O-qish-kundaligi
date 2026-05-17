@@ -22,18 +22,18 @@ body{font-family:Arial,sans-serif;background:#eef2f7;min-height:100vh;padding:20
 .input-row{display:flex;gap:8px;margin-bottom:10px}
 input,select,textarea{flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Arial,sans-serif}
 input:focus,select:focus,textarea:focus{border-color:#27ae60}
-textarea{resize:vertical;min-height:100px}
+textarea{resize:vertical;min-height:120px}
 button{padding:10px 16px;background:#27ae60;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;white-space:nowrap}
 button:hover{background:#219a52}
 button.qizil{background:#e74c3c}
 button.qizil:hover{background:#c0392b}
-button.sariq{background:#f39c12}
+button.sariq{background:#f39c12;width:100%;margin-top:8px}
 button.sariq:hover{background:#d68910}
+button:disabled{background:#aaa;cursor:not-allowed}
 ul{list-style:none;margin-top:10px}
 li{display:flex;align-items:center;gap:12px;background:#f8f9fa;padding:12px 15px;margin-bottom:8px;border-radius:10px;cursor:pointer;border-left:4px solid #27ae60;transition:all 0.2s}
-li.bajarildi{border-left-color:#27ae60;opacity:1}
 li.bajarildi .nom{text-decoration:line-through;color:#999}
-.tick{width:22px;height:22px;border-radius:50%;border:2px solid #27ae60;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;flex-shrink:0;transition:all 0.2s}
+.tick{width:22px;height:22px;border-radius:50%;border:2px solid #27ae60;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;flex-shrink:0}
 li.bajarildi .tick{background:#27ae60;color:white}
 .nom{flex:1;font-size:14px;color:#333}
 .ochir-btn{background:#27ae60;color:white;border:none;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;flex-shrink:0}
@@ -63,7 +63,6 @@ li.bajarildi .tick{background:#27ae60;color:white}
 .kun-foiz{font-size:10px;margin-top:2px}
 .writing-card{background:#f8f9fa;border-radius:12px;padding:15px;margin-bottom:12px;border-left:4px solid #9b59b6}
 .writing-card h4{font-size:14px;color:#2c3e50;margin-bottom:8px}
-.writing-card p{font-size:13px;color:#666;margin-bottom:8px}
 .writing-rasm{width:100%;border-radius:8px;margin-bottom:8px;max-height:200px;object-fit:cover}
 .writing-essay{font-size:13px;color:#333;background:white;padding:10px;border-radius:8px;white-space:pre-wrap}
 .ball{display:inline-block;background:#27ae60;color:white;border-radius:20px;padding:3px 10px;font-size:12px;margin-top:6px}
@@ -75,6 +74,7 @@ li.bajarildi .tick{background:#27ae60;color:white}
 .togri{border-left:3px solid #27ae60!important}
 .notogri{border-left:3px solid #e74c3c!important}
 .section-title{font-size:15px;font-weight:bold;color:#2c3e50;margin-bottom:12px}
+.ai-natija{background:#e8f5e9;border-radius:10px;padding:15px;margin-top:10px;font-size:14px;border-left:4px solid #27ae60}
 </style>
 </head>
 <body>
@@ -129,7 +129,7 @@ li.bajarildi .tick{background:#27ae60;color:white}
       <input type="text" id="writing-sarlavha" placeholder="Sarlavha (masalan: Task 1 - Bar chart)">
     </div>
     <div class="input-row">
-      <input type="text" id="writing-rasm-url" placeholder="Rasm URL (Google Drive yoki boshqa link)">
+      <input type="text" id="writing-rasm-url" placeholder="Rasm URL (ixtiyoriy)">
     </div>
     <div class="input-row">
       <textarea id="writing-essay" placeholder="Esseyingizni shu yerga yozing..."></textarea>
@@ -138,7 +138,9 @@ li.bajarildi .tick{background:#27ae60;color:white}
       <input type="number" id="writing-ball" placeholder="Ball (masalan: 6.5)" min="0" max="9" step="0.5">
       <button onclick="writingQosh()">💾 Saqlash</button>
     </div>
-    <div id="writing-royxat"></div>
+    <button class="sariq" id="ai-btn" onclick="aiBalola()">🤖 AI bilan baholash</button>
+    <div id="ai-natija"></div>
+    <div id="writing-royxat" style="margin-top:15px"></div>
   </div>
 
   <!-- READING -->
@@ -150,19 +152,17 @@ li.bajarildi .tick{background:#27ae60;color:white}
     <div class="input-row">
       <textarea id="reading-matn" placeholder="Reading matni..."></textarea>
     </div>
-    <div id="savollar-qoshish">
-      <div class="input-row">
-        <input type="text" id="savol1" placeholder="1-savol">
-        <input type="text" id="javob1" placeholder="To'g'ri javob">
-      </div>
-      <div class="input-row">
-        <input type="text" id="savol2" placeholder="2-savol">
-        <input type="text" id="javob2" placeholder="To'g'ri javob">
-      </div>
-      <div class="input-row">
-        <input type="text" id="savol3" placeholder="3-savol">
-        <input type="text" id="javob3" placeholder="To'g'ri javob">
-      </div>
+    <div class="input-row">
+      <input type="text" id="savol1" placeholder="1-savol">
+      <input type="text" id="javob1" placeholder="To'g'ri javob">
+    </div>
+    <div class="input-row">
+      <input type="text" id="savol2" placeholder="2-savol">
+      <input type="text" id="javob2" placeholder="To'g'ri javob">
+    </div>
+    <div class="input-row">
+      <input type="text" id="savol3" placeholder="3-savol">
+      <input type="text" id="javob3" placeholder="To'g'ri javob">
     </div>
     <div class="input-row">
       <button onclick="readingQosh()">💾 Saqlash</button>
@@ -209,6 +209,7 @@ li.bajarildi .tick{background:#27ae60;color:white}
 </div>
 
 <script>
+var GEMINI_API = "AIzaSyBtYJMz2rAzA-d1SpLLew-X5-d5xIjCv9o";
 var sozlarRoyxati=[];
 var bildimSon=0,bilmadimSon=0,currentIndex=0;
 var OYLAR=["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
@@ -231,7 +232,6 @@ function tab(nom,btn){
   if(nom=="oylik")oylikKorsatish();
 }
 
-// VAZIFALAR
 function vazifalarYukla(){
   var s=olish("vazifalar_"+bugunKalit())||[];
   ["ielts","kitob","moliya"].forEach(function(g){document.getElementById("royxat-"+g).innerHTML=""});
@@ -291,7 +291,6 @@ function kunProgressSaqla(){
   saqlash("progress_"+bugunKalit(),f);
 }
 
-// WRITING
 function writingQosh(){
   var sarlavha=document.getElementById("writing-sarlavha").value.trim();
   var rasmUrl=document.getElementById("writing-rasm-url").value.trim();
@@ -299,8 +298,7 @@ function writingQosh(){
   var ball=document.getElementById("writing-ball").value;
   if(sarlavha==""||essay=="")return;
   var royxat=olish("writing")||[];
-  var yozuv={sarlavha:sarlavha,rasmUrl:rasmUrl,essay:essay,ball:ball,sana:new Date().toLocaleDateString()};
-  royxat.unshift(yozuv);
+  royxat.unshift({sarlavha:sarlavha,rasmUrl:rasmUrl,essay:essay,ball:ball,sana:new Date().toLocaleDateString()});
   saqlash("writing",royxat);
   document.getElementById("writing-sarlavha").value="";
   document.getElementById("writing-rasm-url").value="";
@@ -315,16 +313,15 @@ function writingKorsatish(){
   div.innerHTML="";
   royxat.forEach(function(w){
     var card=document.createElement("div");card.className="writing-card";
-    var html="<h4>"+w.sarlavha+"</h4><p>📅 "+w.sana+"</p>";
+    var html="<h4>"+w.sarlavha+"</h4><p style='font-size:12px;color:#888'>📅 "+w.sana+"</p>";
     if(w.rasmUrl)html+="<img src='"+w.rasmUrl+"' class='writing-rasm' onerror=\"this.style.display='none'\">";
     html+="<div class='writing-essay'>"+w.essay+"</div>";
-    if(w.ball)html+="<span class='ball'>Ball: "+w.ball+"</span>";
+    if(w.ball)html+="<span class='ball'>Band: "+w.ball+"</span>";
     card.innerHTML=html;
     div.appendChild(card);
   });
 }
 
-// READING
 function readingQosh(){
   var sarlavha=document.getElementById("reading-sarlavha").value.trim();
   var matn=document.getElementById("reading-matn").value.trim();
@@ -352,23 +349,19 @@ function readingKorsatish(){
     var card=document.createElement("div");card.className="reading-card";
     var html="<h4>"+r.sarlavha+"</h4><p style='font-size:13px;color:#555;margin-bottom:10px'>"+r.matn+"</p>";
     r.savollar.forEach(function(s,si){
-      html+="<div class='savol-item' id='savol-"+ri+"-"+si+"'><p>"+s.savol+"</p><input type='text' placeholder='Javobingiz...' onchange='javobTekshir(this,\""+s.javob+"\",\"savol-"+ri+"-"+si+"\")'></div>";
+      html+="<div class='savol-item' id='s-"+ri+"-"+si+"'><p>"+s.savol+"</p><input type='text' placeholder='Javobingiz...' onchange='tekshir(this,\""+s.javob+"\",\"s-"+ri+"-"+si+"\")'></div>";
     });
     card.innerHTML=html;
     div.appendChild(card);
   });
 }
 
-function javobTekshir(input,togriJavob,id){
+function tekshir(input,togri,id){
   var div=document.getElementById(id);
-  if(input.value.trim().toLowerCase()==togriJavob.toLowerCase()){
-    div.classList.add("togri");div.classList.remove("notogri");
-  } else {
-    div.classList.add("notogri");div.classList.remove("togri");
-  }
+  if(input.value.trim().toLowerCase()==togri.toLowerCase()){div.classList.add("togri");div.classList.remove("notogri")}
+  else{div.classList.add("notogri");div.classList.remove("togri")}
 }
 
-// VOCABULARY
 function sozlarYukla(){
   var s=olish("sozlar")||[];
   sozlarRoyxati=s;
@@ -397,7 +390,6 @@ function sozCardQosh(soz,tarjima,misol){
 
 function tovush(soz){var u=new SpeechSynthesisUtterance(soz);u.lang="en-US";speechSynthesis.speak(u)}
 
-// FLASHCARD
 function korsatish(){
   if(sozlarRoyxati.length==0){document.getElementById("card-soz").textContent="Avval so'z qo'shing!";return}
   currentIndex=Math.floor(Math.random()*sozlarRoyxati.length);
@@ -423,7 +415,6 @@ function bilmadim(){
 
 function natija_(){document.getElementById("natija").textContent="✓ Bildim: "+bildimSon+"   ✗ Bilmadim: "+bilmadimSon}
 
-// OYLIK
 function oylikKorsatish(){
   var d=new Date(),yil=d.getFullYear(),oy=d.getMonth(),bugunKun=d.getDate();
   document.getElementById("oy-nomi").textContent=OYLAR[oy]+" "+yil;
@@ -442,46 +433,35 @@ function oylikKorsatish(){
   document.getElementById("oylik-foiz").textContent=(jami==0?0:Math.round(bajarilganKun/jami*100))+"%";
 }
 
+async function aiBalola(){
+  var essay=document.getElementById("writing-essay").value.trim();
+  if(essay==""){alert("Avval essay yozing!");return}
+  var btn=document.getElementById("ai-btn");
+  var natija=document.getElementById("ai-natija");
+  btn.textContent="⏳ Baholanmoqda...";
+  btn.disabled=true;
+  natija.innerHTML="";
+  try{
+    var res=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="+GEMINI_API,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({contents:[{parts:[{text:"Siz IELTS examiner siz. Quyidagi esseyni baholang va o'zbek tilida qisqacha fikr bering. Band score (0-9) bering va asosiy kamchiliklar va yaxshi tomonlarni ayting:\n\n"+essay}]}]})
+    });
+    var data=await res.json();
+    var javob=data.candidates[0].content.parts[0].text;
+    natija.innerHTML="<div class='ai-natija'><b>🤖 AI baholash natijasi:</b><br><br>"+javob.replace(/\n/g,"<br>")+"</div>";
+  }catch(e){
+    natija.innerHTML="<div style='color:red;padding:10px'>Xato yuz berdi. API kalitni tekshiring.</div>";
+  }
+  btn.textContent="🤖 AI bilan baholash";
+  btn.disabled=false;
+}
+
 sanaKorsatish();
 vazifalarYukla();
 sozlarYukla();
 writingKorsatish();
 readingKorsatish();
-  var GEMINI_API = "AIzaSyBtYJMz2rAzA-d1SpLLew-X5-d5xIjCv9o";
-
-async function aiBalola(essay) {
-  var btn = document.getElementById("ai-btn");
-  btn.textContent = "⏳ Baholanmoqda...";
-  btn.disabled = true;
-  try {
-    var res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        contents: [{parts: [{text: "You are an IELTS examiner. Evaluate this essay and give a band score (0-9) with brief feedback in Uzbek language. Essay: " + essay}]}]
-      })
-    });
-    var data = await res.json();
-    var javob = data.candidates[0].content.parts[0].text;
-    document.getElementById("ai-natija").innerHTML = "<div style='background:#e8f5e9;border-radius:10px;padding:15px;margin-top:10px;font-size:14px;border-left:4px solid #27ae60'><b>🤖 AI baholash:</b><br>" + javob.replace(/\n/g,"<br>") + "</div>";
-  } catch(e) {
-    document.getElementById("ai-natija").innerHTML = "<div style='color:red'>Xato yuz berdi. API kalitni tekshiring.</div>";
-  }
-  btn.textContent = "🤖 AI bilan baholash";
-  btn.disabled = false;
-}
-
-async function aiSozTushuntir(soz) {
-  var res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      contents: [{parts: [{text: "Give 2 example sentences for the word '" + soz + "' in English, then translate them to Uzbek. Format: English sentence - O'zbek tarjimasi"}]}]
-    })
-  });
-  var data = await res.json();
-  return data.candidates[0].content.parts[0].text;
-}
 </script>
 </body>
 </html>
