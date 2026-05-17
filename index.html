@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O'qish Kundaligi</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#eef2f7;min-height:100vh;padding:20px 15px}
+.container{max-width:600px;margin:0 auto;background:white;border-radius:16px;padding:25px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.header h1{font-size:20px;color:#2c3e50}
+.sana{font-size:13px;color:#888}
+.tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.tab{flex:1;padding:8px 4px;border:2px solid #e0e0e0;background:white;border-radius:10px;cursor:pointer;font-size:12px;color:#666;transition:all 0.2s;min-width:70px}
+.tab.active{background:#27ae60;border-color:#27ae60;color:white;font-weight:bold}
+.yashirin{display:none!important}
+.progress-box{background:#f8f9fa;border-radius:10px;padding:15px;margin-bottom:20px}
+.progress-label{display:flex;justify-content:space-between;font-size:14px;color:#555;margin-bottom:8px}
+.progress-bar{background:#e0e0e0;border-radius:20px;height:12px;overflow:hidden}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#27ae60,#2ecc71);border-radius:20px;transition:width 0.4s ease}
+.input-row{display:flex;gap:8px;margin-bottom:10px}
+input,select,textarea{flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Arial,sans-serif}
+input:focus,select:focus,textarea:focus{border-color:#27ae60}
+textarea{resize:vertical;min-height:100px}
+button{padding:10px 16px;background:#27ae60;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;white-space:nowrap}
+button:hover{background:#219a52}
+button.qizil{background:#e74c3c}
+button.qizil:hover{background:#c0392b}
+button.sariq{background:#f39c12}
+button.sariq:hover{background:#d68910}
+ul{list-style:none;margin-top:10px}
+li{display:flex;align-items:center;gap:12px;background:#f8f9fa;padding:12px 15px;margin-bottom:8px;border-radius:10px;cursor:pointer;border-left:4px solid #27ae60;transition:all 0.2s}
+li.bajarildi{border-left-color:#27ae60;opacity:1}
+li.bajarildi .nom{text-decoration:line-through;color:#999}
+.tick{width:22px;height:22px;border-radius:50%;border:2px solid #27ae60;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;flex-shrink:0;transition:all 0.2s}
+li.bajarildi .tick{background:#27ae60;color:white}
+.nom{flex:1;font-size:14px;color:#333}
+.ochir-btn{background:#27ae60;color:white;border:none;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;flex-shrink:0}
+.guruh-blok{margin-bottom:15px}
+.guruh-sarlavha{font-size:13px;font-weight:bold;color:#888;padding:8px 0 4px 0;border-bottom:1px solid #eee;margin-bottom:6px}
+.soz-card{background:#f8f9fa;border-radius:10px;padding:14px;margin-bottom:8px;border-left:4px solid #3498db}
+.soz-asosiy{font-size:16px;font-weight:bold;color:#2c3e50;display:flex;justify-content:space-between;align-items:center}
+.soz-tarjima{font-size:13px;color:#666;margin-top:4px}
+.soz-misol{font-size:12px;color:#999;margin-top:4px;font-style:italic}
+.tovush-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:0}
+.card{background:#f8f9fa;border-radius:14px;padding:30px 20px;text-align:center;margin-bottom:15px;min-height:150px;display:flex;flex-direction:column;justify-content:center}
+.card-soz{font-size:26px;font-weight:bold;color:#2c3e50}
+.card-tarjima{font-size:18px;color:#27ae60;margin-top:10px}
+.card-misol{font-size:13px;color:#999;margin-top:8px;font-style:italic}
+.card-buttons{display:flex;gap:8px;justify-content:center}
+.natija{text-align:center;margin-top:15px;font-size:14px;color:#555;font-weight:bold}
+.oylik-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.oylik-header h3{font-size:16px;color:#2c3e50}
+.oylik-progress{font-size:14px;color:#27ae60;font-weight:bold}
+.kunlar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.kun{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;border:1px solid #e0e0e0;background:#f8f9fa;color:#666}
+.kun.bugun{border:2px solid #27ae60;color:#27ae60;font-weight:bold}
+.kun.bajarildi-kun{background:#27ae60;color:white;border-color:#27ae60}
+.kun.qisman{background:#f39c12;color:white;border-color:#f39c12}
+.kun.utgan{background:#ecf0f1;color:#bbb}
+.kun-raqam{font-size:13px;font-weight:bold}
+.kun-foiz{font-size:10px;margin-top:2px}
+.writing-card{background:#f8f9fa;border-radius:12px;padding:15px;margin-bottom:12px;border-left:4px solid #9b59b6}
+.writing-card h4{font-size:14px;color:#2c3e50;margin-bottom:8px}
+.writing-card p{font-size:13px;color:#666;margin-bottom:8px}
+.writing-rasm{width:100%;border-radius:8px;margin-bottom:8px;max-height:200px;object-fit:cover}
+.writing-essay{font-size:13px;color:#333;background:white;padding:10px;border-radius:8px;white-space:pre-wrap}
+.ball{display:inline-block;background:#27ae60;color:white;border-radius:20px;padding:3px 10px;font-size:12px;margin-top:6px}
+.reading-card{background:#f8f9fa;border-radius:12px;padding:15px;margin-bottom:12px;border-left:4px solid #e67e22}
+.reading-card h4{font-size:14px;color:#2c3e50;margin-bottom:8px}
+.savol-item{background:white;border-radius:8px;padding:10px;margin-bottom:8px}
+.savol-item p{font-size:13px;color:#333;margin-bottom:6px}
+.savol-item input{width:100%;font-size:13px;padding:6px 10px}
+.togri{border-left:3px solid #27ae60!important}
+.notogri{border-left:3px solid #e74c3c!important}
+.section-title{font-size:15px;font-weight:bold;color:#2c3e50;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>📚 O'qish kundaligim</h1>
+    <div class="sana" id="sana"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="tab('vazifalar',this)">📋 Vazifalar</button>
+    <button class="tab" onclick="tab('writing',this)">✍️ Writing</button>
+    <button class="tab" onclick="tab('reading',this)">📖 Reading</button>
+    <button class="tab" onclick="tab('vocabulary',this)">📝 Vocab</button>
+    <button class="tab" onclick="tab('flashcard',this)">🃏 Flash</button>
+    <button class="tab" onclick="tab('oylik',this)">📅 Oylik</button>
+  </div>
+
+  <!-- VAZIFALAR -->
+  <div id="vazifalar" class="sahifa">
+    <div class="progress-box">
+      <div class="progress-label"><span>Kunlik progress</span><span id="foiz">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div class="input-row">
+      <input type="text" id="vazifa" placeholder="Vazifa yozing...">
+      <select id="guruh">
+        <option value="ielts">📚 IELTS</option>
+        <option value="kitob">📖 Kitob</option>
+        <option value="moliya">💰 Moliya</option>
+      </select>
+      <button onclick="qosh()">+</button>
+    </div>
+    <div class="guruh-blok">
+      <div class="guruh-sarlavha">📚 IELTS</div>
+      <ul id="royxat-ielts"></ul>
+    </div>
+    <div class="guruh-blok">
+      <div class="guruh-sarlavha">📖 Kitob o'qish</div>
+      <ul id="royxat-kitob"></ul>
+    </div>
+    <div class="guruh-blok">
+      <div class="guruh-sarlavha">💰 Moliyaviy savodxonlik</div>
+      <ul id="royxat-moliya"></ul>
+    </div>
+  </div>
+
+  <!-- WRITING -->
+  <div id="writing" class="sahifa yashirin">
+    <p class="section-title">✍️ Writing vazifasi</p>
+    <div class="input-row">
+      <input type="text" id="writing-sarlavha" placeholder="Sarlavha (masalan: Task 1 - Bar chart)">
+    </div>
+    <div class="input-row">
+      <input type="text" id="writing-rasm-url" placeholder="Rasm URL (Google Drive yoki boshqa link)">
+    </div>
+    <div class="input-row">
+      <textarea id="writing-essay" placeholder="Esseyingizni shu yerga yozing..."></textarea>
+    </div>
+    <div class="input-row">
+      <input type="number" id="writing-ball" placeholder="Ball (masalan: 6.5)" min="0" max="9" step="0.5">
+      <button onclick="writingQosh()">💾 Saqlash</button>
+    </div>
+    <div id="writing-royxat"></div>
+  </div>
+
+  <!-- READING -->
+  <div id="reading" class="sahifa yashirin">
+    <p class="section-title">📖 Reading savol-javob</p>
+    <div class="input-row">
+      <input type="text" id="reading-sarlavha" placeholder="Matn sarlavhasi">
+    </div>
+    <div class="input-row">
+      <textarea id="reading-matn" placeholder="Reading matni..."></textarea>
+    </div>
+    <div id="savollar-qoshish">
+      <div class="input-row">
+        <input type="text" id="savol1" placeholder="1-savol">
+        <input type="text" id="javob1" placeholder="To'g'ri javob">
+      </div>
+      <div class="input-row">
+        <input type="text" id="savol2" placeholder="2-savol">
+        <input type="text" id="javob2" placeholder="To'g'ri javob">
+      </div>
+      <div class="input-row">
+        <input type="text" id="savol3" placeholder="3-savol">
+        <input type="text" id="javob3" placeholder="To'g'ri javob">
+      </div>
+    </div>
+    <div class="input-row">
+      <button onclick="readingQosh()">💾 Saqlash</button>
+    </div>
+    <div id="reading-royxat"></div>
+  </div>
+
+  <!-- VOCABULARY -->
+  <div id="vocabulary" class="sahifa yashirin">
+    <div class="input-row">
+      <input type="text" id="soz" placeholder="So'z (inglizcha)">
+      <button onclick="sozQosh()">+ Qo'shish</button>
+    </div>
+    <div class="input-row">
+      <input type="text" id="tarjima" placeholder="Tarjima (o'zbekcha)">
+      <input type="text" id="misol" placeholder="Misol gap">
+    </div>
+    <div id="sozlar"></div>
+  </div>
+
+  <!-- FLASHCARD -->
+  <div id="flashcard" class="sahifa yashirin">
+    <div class="card">
+      <div class="card-soz" id="card-soz">Ko'rsatish tugmasini bosing</div>
+      <div class="card-tarjima yashirin" id="card-tarjima"></div>
+      <div class="card-misol yashirin" id="card-misol"></div>
+    </div>
+    <div class="card-buttons">
+      <button onclick="korsatish()">Ko'rsatish</button>
+      <button onclick="bildim()">✓ Bildim</button>
+      <button onclick="bilmadim()" class="qizil">✗ Bilmadim</button>
+    </div>
+    <div class="natija" id="natija"></div>
+  </div>
+
+  <!-- OYLIK -->
+  <div id="oylik" class="sahifa yashirin">
+    <div class="oylik-header">
+      <h3 id="oy-nomi"></h3>
+      <div class="oylik-progress"><span id="oylik-foiz">0%</span> bajarildi</div>
+    </div>
+    <div class="kunlar" id="kunlar"></div>
+  </div>
+</div>
+
+<script>
+var sozlarRoyxati=[];
+var bildimSon=0,bilmadimSon=0,currentIndex=0;
+var OYLAR=["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
+var KUNLAR_NOMI=["Du","Se","Chor","Pay","Ju","Shan","Yak"];
+
+function bugunKalit(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+function saqlash(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function olish(k){var m=localStorage.getItem(k);return m?JSON.parse(m):null}
+
+function sanaKorsatish(){
+  var d=new Date();
+  document.getElementById("sana").textContent=KUNLAR_NOMI[d.getDay()==0?6:d.getDay()-1]+", "+d.getDate()+" "+OYLAR[d.getMonth()]+" "+d.getFullYear();
+}
+
+function tab(nom,btn){
+  document.querySelectorAll(".sahifa").forEach(function(s){s.classList.add("yashirin")});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});
+  document.getElementById(nom).classList.remove("yashirin");
+  btn.classList.add("active");
+  if(nom=="oylik")oylikKorsatish();
+}
+
+// VAZIFALAR
+function vazifalarYukla(){
+  var s=olish("vazifalar_"+bugunKalit())||[];
+  ["ielts","kitob","moliya"].forEach(function(g){document.getElementById("royxat-"+g).innerHTML=""});
+  s.forEach(function(v){bandQosh(v.matn,v.bajarildi,v.guruh)});
+  progressYangilansin();
+}
+
+function bandQosh(matn,bajarildiMi,guruh){
+  guruh=guruh||"ielts";
+  var royxat=document.getElementById("royxat-"+guruh);
+  var band=document.createElement("li");
+  if(bajarildiMi)band.classList.add("bajarildi");
+  band.dataset.guruh=guruh;
+  var tick=document.createElement("div");tick.className="tick";tick.textContent="✓";
+  var nom=document.createElement("span");nom.className="nom";nom.textContent=matn;
+  var btn=document.createElement("button");btn.className="ochir-btn";btn.textContent="✓ Bajarildi";
+  btn.onclick=function(e){
+    e.stopPropagation();
+    band.style.transition="all 0.3s";band.style.opacity="0";band.style.transform="translateX(30px)";
+    setTimeout(function(){band.remove();vazifalarSaqla();progressYangilansin()},300);
+  };
+  band.appendChild(tick);band.appendChild(nom);band.appendChild(btn);
+  band.onclick=function(){band.classList.toggle("bajarildi");vazifalarSaqla();progressYangilansin()};
+  royxat.appendChild(band);
+}
+
+function qosh(){
+  var matn=document.getElementById("vazifa").value.trim();
+  var guruh=document.getElementById("guruh").value;
+  if(matn=="")return;
+  bandQosh(matn,false,guruh);
+  document.getElementById("vazifa").value="";
+  vazifalarSaqla();progressYangilansin();
+}
+
+function vazifalarSaqla(){
+  var arr=[];
+  document.querySelectorAll("#vazifalar li").forEach(function(b){
+    arr.push({matn:b.querySelector(".nom").textContent,bajarildi:b.classList.contains("bajarildi"),guruh:b.dataset.guruh});
+  });
+  saqlash("vazifalar_"+bugunKalit(),arr);
+  kunProgressSaqla();
+}
+
+function progressYangilansin(){
+  var h=document.querySelectorAll("#vazifalar li").length;
+  var b=document.querySelectorAll("#vazifalar li.bajarildi").length;
+  var f=h==0?0:Math.round(b/h*100);
+  document.getElementById("foiz").textContent=f+"%";
+  document.getElementById("progress-fill").style.width=f+"%";
+}
+
+function kunProgressSaqla(){
+  var h=document.querySelectorAll("#vazifalar li").length;
+  var b=document.querySelectorAll("#vazifalar li.bajarildi").length;
+  var f=h==0?0:Math.round(b/h*100);
+  saqlash("progress_"+bugunKalit(),f);
+}
+
+// WRITING
+function writingQosh(){
+  var sarlavha=document.getElementById("writing-sarlavha").value.trim();
+  var rasmUrl=document.getElementById("writing-rasm-url").value.trim();
+  var essay=document.getElementById("writing-essay").value.trim();
+  var ball=document.getElementById("writing-ball").value;
+  if(sarlavha==""||essay=="")return;
+  var royxat=olish("writing")||[];
+  var yozuv={sarlavha:sarlavha,rasmUrl:rasmUrl,essay:essay,ball:ball,sana:new Date().toLocaleDateString()};
+  royxat.unshift(yozuv);
+  saqlash("writing",royxat);
+  document.getElementById("writing-sarlavha").value="";
+  document.getElementById("writing-rasm-url").value="";
+  document.getElementById("writing-essay").value="";
+  document.getElementById("writing-ball").value="";
+  writingKorsatish();
+}
+
+function writingKorsatish(){
+  var royxat=olish("writing")||[];
+  var div=document.getElementById("writing-royxat");
+  div.innerHTML="";
+  royxat.forEach(function(w){
+    var card=document.createElement("div");card.className="writing-card";
+    var html="<h4>"+w.sarlavha+"</h4><p>📅 "+w.sana+"</p>";
+    if(w.rasmUrl)html+="<img src='"+w.rasmUrl+"' class='writing-rasm' onerror=\"this.style.display='none'\">";
+    html+="<div class='writing-essay'>"+w.essay+"</div>";
+    if(w.ball)html+="<span class='ball'>Ball: "+w.ball+"</span>";
+    card.innerHTML=html;
+    div.appendChild(card);
+  });
+}
+
+// READING
+function readingQosh(){
+  var sarlavha=document.getElementById("reading-sarlavha").value.trim();
+  var matn=document.getElementById("reading-matn").value.trim();
+  if(sarlavha=="")return;
+  var savollar=[];
+  for(var i=1;i<=3;i++){
+    var s=document.getElementById("savol"+i).value.trim();
+    var j=document.getElementById("javob"+i).value.trim();
+    if(s&&j)savollar.push({savol:s,javob:j});
+  }
+  var royxat=olish("reading")||[];
+  royxat.unshift({sarlavha:sarlavha,matn:matn,savollar:savollar,sana:new Date().toLocaleDateString()});
+  saqlash("reading",royxat);
+  document.getElementById("reading-sarlavha").value="";
+  document.getElementById("reading-matn").value="";
+  for(var i=1;i<=3;i++){document.getElementById("savol"+i).value="";document.getElementById("javob"+i).value=""}
+  readingKorsatish();
+}
+
+function readingKorsatish(){
+  var royxat=olish("reading")||[];
+  var div=document.getElementById("reading-royxat");
+  div.innerHTML="";
+  royxat.forEach(function(r,ri){
+    var card=document.createElement("div");card.className="reading-card";
+    var html="<h4>"+r.sarlavha+"</h4><p style='font-size:13px;color:#555;margin-bottom:10px'>"+r.matn+"</p>";
+    r.savollar.forEach(function(s,si){
+      html+="<div class='savol-item' id='savol-"+ri+"-"+si+"'><p>"+s.savol+"</p><input type='text' placeholder='Javobingiz...' onchange='javobTekshir(this,\""+s.javob+"\",\"savol-"+ri+"-"+si+"\")'></div>";
+    });
+    card.innerHTML=html;
+    div.appendChild(card);
+  });
+}
+
+function javobTekshir(input,togriJavob,id){
+  var div=document.getElementById(id);
+  if(input.value.trim().toLowerCase()==togriJavob.toLowerCase()){
+    div.classList.add("togri");div.classList.remove("notogri");
+  } else {
+    div.classList.add("notogri");div.classList.remove("togri");
+  }
+}
+
+// VOCABULARY
+function sozlarYukla(){
+  var s=olish("sozlar")||[];
+  sozlarRoyxati=s;
+  document.getElementById("sozlar").innerHTML="";
+  s.forEach(function(s){sozCardQosh(s.soz,s.tarjima,s.misol)});
+}
+
+function sozQosh(){
+  var soz=document.getElementById("soz").value.trim();
+  var tarjima=document.getElementById("tarjima").value.trim();
+  var misol=document.getElementById("misol").value.trim();
+  if(soz==""||tarjima=="")return;
+  sozlarRoyxati.push({soz:soz,tarjima:tarjima,misol:misol});
+  saqlash("sozlar",sozlarRoyxati);
+  sozCardQosh(soz,tarjima,misol);
+  document.getElementById("soz").value="";
+  document.getElementById("tarjima").value="";
+  document.getElementById("misol").value="";
+}
+
+function sozCardQosh(soz,tarjima,misol){
+  var div=document.createElement("div");div.className="soz-card";
+  div.innerHTML="<div class='soz-asosiy'><span>"+soz+"</span><button class='tovush-btn' onclick='tovush(\""+soz+"\")'>🔊</button></div><div class='soz-tarjima'>"+tarjima+"</div><div class='soz-misol'>"+(misol||"")+"</div>";
+  document.getElementById("sozlar").appendChild(div);
+}
+
+function tovush(soz){var u=new SpeechSynthesisUtterance(soz);u.lang="en-US";speechSynthesis.speak(u)}
+
+// FLASHCARD
+function korsatish(){
+  if(sozlarRoyxati.length==0){document.getElementById("card-soz").textContent="Avval so'z qo'shing!";return}
+  currentIndex=Math.floor(Math.random()*sozlarRoyxati.length);
+  var s=sozlarRoyxati[currentIndex];
+  document.getElementById("card-soz").textContent=s.soz;
+  document.getElementById("card-tarjima").textContent=s.tarjima;
+  document.getElementById("card-tarjima").classList.add("yashirin");
+  document.getElementById("card-misol").textContent=s.misol||"";
+  document.getElementById("card-misol").classList.add("yashirin");
+}
+
+function bildim(){
+  var t=document.getElementById("card-tarjima");
+  if(t.classList.contains("yashirin")){t.classList.remove("yashirin");document.getElementById("card-misol").classList.remove("yashirin");return}
+  bildimSon++;natija_();korsatish();
+}
+
+function bilmadim(){
+  var t=document.getElementById("card-tarjima");
+  if(t.classList.contains("yashirin")){t.classList.remove("yashirin");document.getElementById("card-misol").classList.remove("yashirin");return}
+  bilmadimSon++;natija_();korsatish();
+}
+
+function natija_(){document.getElementById("natija").textContent="✓ Bildim: "+bildimSon+"   ✗ Bilmadim: "+bilmadimSon}
+
+// OYLIK
+function oylikKorsatish(){
+  var d=new Date(),yil=d.getFullYear(),oy=d.getMonth(),bugunKun=d.getDate();
+  document.getElementById("oy-nomi").textContent=OYLAR[oy]+" "+yil;
+  var kunSoni=new Date(yil,oy+1,0).getDate();
+  var div=document.getElementById("kunlar");div.innerHTML="";
+  var jami=0,bajarilganKun=0;
+  for(var i=1;i<=kunSoni;i++){
+    var f=olish("progress_"+yil+"-"+(oy+1)+"-"+i)||0;
+    var kun=document.createElement("div");kun.className="kun";
+    if(i==bugunKun)kun.classList.add("bugun");
+    else if(i<bugunKun){if(f>=100){kun.classList.add("bajarildi-kun");bajarilganKun++}else if(f>0)kun.classList.add("qisman");else kun.classList.add("utgan");jami++}
+    var r=document.createElement("div");r.className="kun-raqam";r.textContent=i;
+    var fd=document.createElement("div");fd.className="kun-foiz";fd.textContent=i<=bugunKun&&f>0?f+"%":"";
+    kun.appendChild(r);kun.appendChild(fd);div.appendChild(kun);
+  }
+  document.getElementById("oylik-foiz").textContent=(jami==0?0:Math.round(bajarilganKun/jami*100))+"%";
+}
+
+sanaKorsatish();
+vazifalarYukla();
+sozlarYukla();
+writingKorsatish();
+readingKorsatish();
+</script>
+</body>
+</html>
