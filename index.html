@@ -209,7 +209,7 @@ li.bajarildi .tick{background:#27ae60;color:white}
 </div>
 
 <script>
-var GEMINI_API ="AIzaSyAnPa5jA9F1MKFQ5bwZjg_YRHMOWUQgdnQ";
+var GEMINI_API = "AIzaSyAnPa5jA9F1MKFQ5bwZjg_YRHMOWUQgdnQ";
 var sozlarRoyxati=[];
 var bildimSon=0,bilmadimSon=0,currentIndex=0;
 var OYLAR=["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
@@ -442,7 +442,7 @@ async function aiBalola(){
   btn.disabled=true;
   natija.innerHTML="";
   try{
-    var res=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="+GEMINI_API,{
+    var res=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+GEMINI_API,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({contents:[{parts:[{text:"Siz IELTS examiner siz. Quyidagi esseyni baholang va o'zbek tilida qisqacha fikr bering. Band score (0-9) bering va asosiy kamchiliklar va yaxshi tomonlarni ayting:\n\n"+essay}]}]})
