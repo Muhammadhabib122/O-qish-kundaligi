@@ -447,6 +447,41 @@ vazifalarYukla();
 sozlarYukla();
 writingKorsatish();
 readingKorsatish();
+  var GEMINI_API = "AIzaSyBtYJMz2rAzA-d1SpLLew-X5-d5xIjCv9o";
+
+async function aiBalola(essay) {
+  var btn = document.getElementById("ai-btn");
+  btn.textContent = "⏳ Baholanmoqda...";
+  btn.disabled = true;
+  try {
+    var res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        contents: [{parts: [{text: "You are an IELTS examiner. Evaluate this essay and give a band score (0-9) with brief feedback in Uzbek language. Essay: " + essay}]}]
+      })
+    });
+    var data = await res.json();
+    var javob = data.candidates[0].content.parts[0].text;
+    document.getElementById("ai-natija").innerHTML = "<div style='background:#e8f5e9;border-radius:10px;padding:15px;margin-top:10px;font-size:14px;border-left:4px solid #27ae60'><b>🤖 AI baholash:</b><br>" + javob.replace(/\n/g,"<br>") + "</div>";
+  } catch(e) {
+    document.getElementById("ai-natija").innerHTML = "<div style='color:red'>Xato yuz berdi. API kalitni tekshiring.</div>";
+  }
+  btn.textContent = "🤖 AI bilan baholash";
+  btn.disabled = false;
+}
+
+async function aiSozTushuntir(soz) {
+  var res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + GEMINI_API, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      contents: [{parts: [{text: "Give 2 example sentences for the word '" + soz + "' in English, then translate them to Uzbek. Format: English sentence - O'zbek tarjimasi"}]}]
+    })
+  });
+  var data = await res.json();
+  return data.candidates[0].content.parts[0].text;
+}
 </script>
 </body>
 </html>
