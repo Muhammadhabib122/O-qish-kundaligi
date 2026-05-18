@@ -21,7 +21,7 @@ body{font-family:Arial,sans-serif;background:#eef2f7;min-height:100vh;padding:20
 .strike-right p{font-size:11px;opacity:0.8}
 .strike-right b{font-size:16px}
 .tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
-.tab{flex:1;padding:8px 4px;border:2px solid #e0e0e0;background:white;border-radius:10px;cursor:pointer;font-size:12px;color:#666;transition:all 0.2s;min-width:70px}
+.tab{flex:1;padding:8px 4px;border:2px solid #e0e0e0;background:white;border-radius:10px;cursor:pointer;font-size:11px;color:#666;transition:all 0.2s;min-width:60px}
 .tab.active{background:#27ae60;border-color:#27ae60;color:white;font-weight:bold}
 .yashirin{display:none!important}
 .progress-box{background:#f8f9fa;border-radius:10px;padding:15px;margin-bottom:20px}
@@ -85,10 +85,32 @@ li.bajarildi .tick{background:#27ae60;color:white}
 @keyframes pop{0%{transform:translate(-50%,-50%) scale(0.5)}100%{transform:translate(-50%,-50%) scale(1)}}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:none}
 .overlay.show{display:block}
-.kunlik-atama{background:linear-gradient(135deg,#667eea,#764ba2);border-radius:14px;padding:15px 20px;margin-bottom:20px;color:white}
-.kunlik-atama h4{font-size:13px;opacity:0.9;margin-bottom:5px}
+.kunlik-atama{background:linear-gradient(135deg,#667eea,#764ba2);border-radius:14px;padding:15px 20px;margin-bottom:20px;color:white;cursor:pointer;transition:all 0.2s}
+.kunlik-atama:hover{opacity:0.9}
+.kunlik-atama h4{font-size:12px;opacity:0.9;margin-bottom:5px}
 .kunlik-atama .atama{font-size:18px;font-weight:bold}
 .kunlik-atama .atama-tarjima{font-size:13px;opacity:0.9;margin-top:4px}
+.atama-detail{background:white;border-radius:10px;padding:12px;margin-top:10px;display:none}
+.atama-detail.ochiq{display:block}
+.atama-detail p{font-size:13px;color:#444;margin-bottom:6px;line-height:1.6}
+.atama-detail .misol{font-style:italic;color:#666;font-size:12px;border-left:3px solid #764ba2;padding-left:8px;margin-top:6px}
+.hisob-card{background:#f8f9fa;border-radius:12px;padding:15px;margin-bottom:10px}
+.hisob-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:15px}
+.hisob-stat{background:white;border-radius:10px;padding:12px;text-align:center}
+.hisob-stat .val{font-size:18px;font-weight:bold}
+.hisob-stat .lbl{font-size:11px;color:#888;margin-top:3px}
+.daromad-val{color:#27ae60}
+.xarajat-val{color:#e74c3c}
+.qoldiq-val{color:#3498db}
+.hisob-item{display:flex;align-items:center;justify-content:space-between;background:white;padding:10px 14px;border-radius:8px;margin-bottom:6px;border-left:4px solid #27ae60}
+.hisob-item.xarajat{border-left-color:#e74c3c}
+.hisob-item-info{flex:1}
+.hisob-item-nom{font-size:14px;color:#333}
+.hisob-item-sana{font-size:11px;color:#999}
+.hisob-item-summa{font-size:15px;font-weight:bold;color:#27ae60}
+.hisob-item.xarajat .hisob-item-summa{color:#e74c3c}
+.ochir-hisob{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:0 5px}
+.ochir-hisob:hover{color:#e74c3c}
 </style>
 </head>
 <body>
@@ -121,10 +143,14 @@ li.bajarildi .tick{background:#27ae60;color:white}
     </div>
   </div>
 
-  <div class="kunlik-atama">
-    <h4>💰 Bugungi moliyaviy atama</h4>
+  <div class="kunlik-atama" onclick="atamaToggle()">
+    <h4>💰 Bugungi moliyaviy atama — bosing batafsil ko'ring</h4>
     <div class="atama" id="atama-nomi"></div>
     <div class="atama-tarjima" id="atama-tarjima"></div>
+    <div class="atama-detail" id="atama-detail">
+      <p id="atama-izoh"></p>
+      <div class="misol" id="atama-misol"></div>
+    </div>
   </div>
 
   <div class="tabs">
@@ -133,9 +159,11 @@ li.bajarildi .tick{background:#27ae60;color:white}
     <button class="tab" onclick="tab('reading',this)">📖 Reading</button>
     <button class="tab" onclick="tab('vocabulary',this)">📝 Vocab</button>
     <button class="tab" onclick="tab('flashcard',this)">🃏 Flash</button>
+    <button class="tab" onclick="tab('hisob',this)">💰 Hisob</button>
     <button class="tab" onclick="tab('oylik',this)">📅 Oylik</button>
   </div>
 
+  <!-- VAZIFALAR -->
   <div id="vazifalar" class="sahifa">
     <div class="progress-box">
       <div class="progress-label"><span>Kunlik progress</span><span id="foiz">0%</span></div>
@@ -164,6 +192,7 @@ li.bajarildi .tick{background:#27ae60;color:white}
     </div>
   </div>
 
+  <!-- WRITING -->
   <div id="writing" class="sahifa yashirin">
     <p class="section-title">✍️ Writing vazifasi</p>
     <div class="input-row">
@@ -182,6 +211,7 @@ li.bajarildi .tick{background:#27ae60;color:white}
     <div id="writing-royxat" style="margin-top:15px"></div>
   </div>
 
+  <!-- READING -->
   <div id="reading" class="sahifa yashirin">
     <p class="section-title">📖 Reading savol-javob</p>
     <div class="input-row">
@@ -208,6 +238,7 @@ li.bajarildi .tick{background:#27ae60;color:white}
     <div id="reading-royxat"></div>
   </div>
 
+  <!-- VOCABULARY -->
   <div id="vocabulary" class="sahifa yashirin">
     <div class="input-row">
       <input type="text" id="soz" placeholder="So'z (inglizcha)">
@@ -220,6 +251,7 @@ li.bajarildi .tick{background:#27ae60;color:white}
     <div id="sozlar"></div>
   </div>
 
+  <!-- FLASHCARD -->
   <div id="flashcard" class="sahifa yashirin">
     <div class="card">
       <div class="card-soz" id="card-soz">Ko'rsatish tugmasini bosing</div>
@@ -234,6 +266,40 @@ li.bajarildi .tick{background:#27ae60;color:white}
     <div class="natija" id="natija"></div>
   </div>
 
+  <!-- HISOB -->
+  <div id="hisob" class="sahifa yashirin">
+    <p class="section-title">💰 Moliyaviy hisob-kitob</p>
+    <div class="hisob-summary">
+      <div class="hisob-stat">
+        <div class="val daromad-val" id="jami-daromad">0</div>
+        <div class="lbl">Daromad (so'm)</div>
+      </div>
+      <div class="hisob-stat">
+        <div class="val xarajat-val" id="jami-xarajat">0</div>
+        <div class="lbl">Xarajat (so'm)</div>
+      </div>
+      <div class="hisob-stat">
+        <div class="val qoldiq-val" id="jami-qoldiq">0</div>
+        <div class="lbl">Qoldiq (so'm)</div>
+      </div>
+    </div>
+    <div class="hisob-card">
+      <div class="input-row">
+        <input type="text" id="hisob-nom" placeholder="Nima (masalan: Maosh, Ovqat)">
+        <select id="hisob-tur">
+          <option value="daromad">📈 Daromad</option>
+          <option value="xarajat">📉 Xarajat</option>
+        </select>
+      </div>
+      <div class="input-row">
+        <input type="number" id="hisob-summa" placeholder="Summa (so'm)">
+        <button onclick="hisobQosh()">+ Qo'shish</button>
+      </div>
+    </div>
+    <div id="hisob-royxat"></div>
+  </div>
+
+  <!-- OYLIK -->
   <div id="oylik" class="sahifa yashirin">
     <div class="oylik-header">
       <h3 id="oy-nomi"></h3>
@@ -261,36 +327,36 @@ var KUNLIK_VAZIFALAR=[
 ];
 
 var MOLIYAVIY_ATAMALAR=[
-  {nomi:"Likvidlik (Liquidity)",tarjima:"Aktivni tezda naqd pulga aylantirish imkoniyati"},
-  {nomi:"Inflyatsiya (Inflation)",tarjima:"Narxlarning umumiy darajasi oshishi, pulning qadrsizlanishi"},
-  {nomi:"Kapital (Capital)",tarjima:"Biznesga investitsiya qilingan pul yoki aktivlar"},
-  {nomi:"Dividend",tarjima:"Aktsiyadorlarga kompaniya foydasidan to'lanadigan ulush"},
-  {nomi:"Kredit reytingi (Credit Rating)",tarjima:"Qarz oluvchining to'lov qobiliyatini baholash"},
-  {nomi:"Portfel (Portfolio)",tarjima:"Investor uchun turli moliyaviy aktivlar to'plami"},
-  {nomi:"Foiz stavkasi (Interest Rate)",tarjima:"Qarz pulidan olinadigan yoki to'lanadigan foiz miqdori"},
-  {nomi:"Depozit (Deposit)",tarjima:"Bankka saqlanishga qo'yilgan pul mablag'lari"},
-  {nomi:"Ipoteka (Mortgage)",tarjima:"Ko'chmas mulk garovi ostida beriladigan uzoq muddatli kredit"},
-  {nomi:"Valyuta kursi (Exchange Rate)",tarjima:"Bir valyutaning boshqa valyutaga nisbatan qiymati"},
-  {nomi:"Byudjet (Budget)",tarjima:"Daromad va xarajatlarni rejalashtirilgan hisob-kitobi"},
-  {nomi:"Aktiv (Asset)",tarjima:"Kompaniya yoki shaxsga tegishli qimmatli mulk"},
-  {nomi:"Passiv (Liability)",tarjima:"Kompaniya yoki shaxsning qarzlari va majburiyatlari"},
-  {nomi:"Rentabellik (Profitability)",tarjima:"Investitsiyadan olinadigan daromad darajasi"},
-  {nomi:"Diversifikatsiya (Diversification)",tarjima:"Xavfni kamaytirish uchun turli sohalarga sarmoya qo'yish"},
-  {nomi:"Emissiya (Emission)",tarjima:"Davlat yoki kompaniya tomonidan qimmatli qog'ozlar chiqarish"},
-  {nomi:"Qimmatli qog'ozlar (Securities)",tarjima:"Aksiya, obligatsiya kabi moliyaviy hujjatlar"},
-  {nomi:"Defolt (Default)",tarjima:"Qarzni to'lay olmaslik holati"},
-  {nomi:"Subsidiya (Subsidy)",tarjima:"Davlat tomonidan beriladigan moliyaviy yordam"},
-  {nomi:"Amortizatsiya (Amortization)",tarjima:"Aktivning qiymatini vaqt o'tishi bilan hisobdan chiqarish"},
-  {nomi:"Lizing (Leasing)",tarjima:"Mulkni vaqtinchalik foydalanish uchun ijaraga berish"},
-  {nomi:"Faktoring (Factoring)",tarjima:"Debitorlik qarzlarini uchinchi shaxsga sotish"},
-  {nomi:"Franchayzing (Franchising)",tarjima:"Brend va biznes modelini boshqalarga litsenziya asosida berish"},
-  {nomi:"Marketkap (Market Cap)",tarjima:"Kompaniyaning bozor qiymati — aksiyalar soni × narxi"},
-  {nomi:"Likvidatsiya (Liquidation)",tarjima:"Kompaniyani yopish va aktivlarni sotish jarayoni"},
-  {nomi:"Forvard shartnoma (Forward Contract)",tarjima:"Kelajakdagi sanada belgilangan narxda sotib olish shartnomasi"},
-  {nomi:"Fyuchers (Futures)",tarjima:"Standart sharoitlarda kelajakdagi bitimni bajarish majburiyati"},
-  {nomi:"Opsion (Option)",tarjima:"Aktivni belgilangan narxda sotib olish yoki sotish huquqi"},
-  {nomi:"Kapital bozori (Capital Market)",tarjima:"Uzoq muddatli moliyaviy vositalar almashinadigan bozor"},
-  {nomi:"Pul bozori (Money Market)",tarjima:"Qisqa muddatli qarz va kredit operatsiyalari bozori"}
+  {nomi:"Likvidlik (Liquidity)",tarjima:"Aktivni tezda naqd pulga aylantirish imkoniyati",izoh:"Likvidlik — bir aktivni bozorda tez va yo'qotishsiz sotish qobiliyati. Naqd pul eng likvid aktiv hisoblanadi.",misol:"Masalan: Ko'chmas mulk kam likvid, aksiyalar esa yuqori likvid."},
+  {nomi:"Inflyatsiya (Inflation)",tarjima:"Narxlarning umumiy darajasi oshishi, pulning qadrsizlanishi",izoh:"Inflyatsiya — vaqt o'tishi bilan tovar va xizmatlar narxining oshishi. Bu pulning xarid qobiliyatini kamaytiradi.",misol:"Masalan: Yil boshida non 5000 so'm bo'lsa, yil oxirida 5500 so'm bo'lishi 10% inflyatsiyadir."},
+  {nomi:"Kapital (Capital)",tarjima:"Biznesga investitsiya qilingan pul yoki aktivlar",izoh:"Kapital — ishlab chiqarish yoki investitsiya maqsadida foydalaniladigan moliyaviy resurslar va aktivlar.",misol:"Masalan: Kompaniya 100 mln so'm kapital bilan ishga tushdi."},
+  {nomi:"Dividend",tarjima:"Aktsiyadorlarga kompaniya foydasidan to'lanadigan ulush",izoh:"Dividend — kompaniya o'z foydasining bir qismini aktsiyadorlarga ulashishi. Har bir aksiya uchun ma'lum miqdor to'lanadi.",misol:"Masalan: Siz 100 ta aksiya sotib oldingiz, kompaniya har aksiyaga 1000 so'm dividend e'lon qildi — 100,000 so'm olasiz."},
+  {nomi:"Kredit reytingi (Credit Rating)",tarjima:"Qarz oluvchining to'lov qobiliyatini baholash",izoh:"Kredit reytingi — shaxs yoki kompaniyaning qarzlarini o'z vaqtida to'lay olish qobiliyatini ko'rsatuvchi baho.",misol:"Masalan: AAA eng yuqori reyting, D esa defolt (to'lay olmaslik) holatini bildiradi."},
+  {nomi:"Portfel (Portfolio)",tarjima:"Investor uchun turli moliyaviy aktivlar to'plami",izoh:"Investitsion portfel — aksiyalar, obligatsiyalar, fond va boshqa aktivlarning to'plami. Diversifikatsiya xavfni kamaytiradi.",misol:"Masalan: 50% aksiya, 30% obligatsiya, 20% oltin — bu balanced portfolio."},
+  {nomi:"Foiz stavkasi (Interest Rate)",tarjima:"Qarz pulidan olinadigan yoki to'lanadigan foiz miqdori",izoh:"Foiz stavkasi — qarz beruvchi tomonidan qarz oluvchidan talab qilinadigan to'lov. Markaziy bank boshqaradi.",misol:"Masalan: Bank yiliga 20% foiz bilan kredit bersa, 1 mln so'mga yilda 200,000 so'm foiz to'laysiz."},
+  {nomi:"Depozit (Deposit)",tarjima:"Bankka saqlanishga qo'yilgan pul mablag'lari",izoh:"Bank depoziti — pulni bankka ma'lum muddat uchun qo'yish. Bank foiz to'laydi, siz xavfsiz saqlaysiz.",misol:"Masalan: 10 mln so'mni 1 yilga 15% da qo'ysangiz, yil oxirida 11.5 mln olasiz."},
+  {nomi:"Ipoteka (Mortgage)",tarjima:"Ko'chmas mulk garovi ostida beriladigan uzoq muddatli kredit",izoh:"Ipoteka — uy yoki ko'chmas mulk sotib olish uchun bank tomonidan beriladigan uzoq muddatli kredit.",misol:"Masalan: 500 mln so'mlik uy uchun 20% boshlang'ich to'lov bilan 80% ni 20 yilga ipoteka olasiz."},
+  {nomi:"Valyuta kursi (Exchange Rate)",tarjima:"Bir valyutaning boshqa valyutaga nisbatan qiymati",izoh:"Valyuta kursi — bir mamlakat pulining boshqa mamlakat puliga nisbati. Bozor va Markaziy bank tomonidan belgilanadi.",misol:"Masalan: 1 USD = 12,800 so'm bo'lsa, 100 dollaringiz 1,280,000 so'm qiladi."},
+  {nomi:"Byudjet (Budget)",tarjima:"Daromad va xarajatlarni rejalashtirilgan hisob-kitobi",izoh:"Byudjet — ma'lum davr uchun kutilgan daromad va rejalashtirilgan xarajatlarning batafsil rejasi.",misol:"Masalan: Oylik maosh 5 mln, ijara 1.5 mln, ovqat 1 mln, boshqalar 0.5 mln — 2 mln tejash maqsad."},
+  {nomi:"Aktiv (Asset)",tarjima:"Kompaniya yoki shaxsga tegishli qimmatli mulk",izoh:"Aktivlar — pul, ko'chmas mulk, aksiyalar, uskunalar kabi qimmatga ega narsalar. Balansning chap tomoni.",misol:"Masalan: Uy, mashina, bank hisobidagi pul, aksiyalar — bularning hammasi aktiv."},
+  {nomi:"Passiv (Liability)",tarjima:"Kompaniya yoki shaxsning qarzlari va majburiyatlari",izoh:"Passivlar — to'lanishi kerak bo'lgan qarzlar va majburiyatlar. Aktivlardan passivlarni ayirsak sof boylik chiqadi.",misol:"Masalan: Bank krediti, to'lanmagan hisob-fakturalar, ipoteka — bularning hammasi passiv."},
+  {nomi:"Rentabellik (Profitability)",tarjima:"Investitsiyadan olinadigan daromad darajasi",izoh:"Rentabellik — sarflangan mablag'ga nisbatan olingan daromad nisbati. Biznes samaradorligini o'lchaydi.",misol:"Masalan: 1 mln so'm sarflab 200,000 so'm foyda olsangiz, rentabellik 20%."},
+  {nomi:"Diversifikatsiya (Diversification)",tarjima:"Xavfni kamaytirish uchun turli sohalarga sarmoya qo'yish",izoh:"Diversifikatsiya — 'barcha tuxumlarni bir savatga qo'yma' tamoyili. Turli aktivlarga sarmoya xavfni taqsimlaydi.",misol:"Masalan: Faqat bitta kompaniya aksiyasiga emas, 10 ta turli kompaniyaga sarmoya qo'yish."},
+  {nomi:"Emissiya (Emission)",tarjima:"Davlat yoki kompaniya tomonidan qimmatli qog'ozlar chiqarish",izoh:"Emissiya — aksiya yoki obligatsiyalar chiqarish orqali kapital jalb qilish jarayoni.",misol:"Masalan: Kompaniya IPO (birinchi ochiq taklif) orqali aksiyalar emissiyasi qiladi."},
+  {nomi:"Qimmatli qog'ozlar (Securities)",tarjima:"Aksiya, obligatsiya kabi moliyaviy hujjatlar",izoh:"Qimmatli qog'ozlar — moliyaviy huquq va majburiyatlarni ifodalovchi hujjatlar. Fond bozorida sotilib olinadi.",misol:"Masalan: Aksiya (ownership) va obligatsiya (debt) eng keng tarqalgan qimmatli qog'ozlar."},
+  {nomi:"Defolt (Default)",tarjima:"Qarzni to'lay olmaslik holati",izoh:"Defolt — qarz oluvchining o'z majburiyatlarini bajarolmasligi. Davlat yoki kompaniya defoltga tushishi mumkin.",misol:"Masalan: Argentinaning 2001-yildagi defolt holati — davlat tashqi qarzlarini to'lay olmadi."},
+  {nomi:"Subsidiya (Subsidy)",tarjima:"Davlat tomonidan beriladigan moliyaviy yordam",izoh:"Subsidiya — davlat tomonidan narxlarni past ushlab turish yoki muayyan sohani qo'llab-quvvatlash maqsadida beriladigan yordam.",misol:"Masalan: Elektr energiyasiga subsidiya — davlat haqiqiy narxning bir qismini o'zi to'laydi."},
+  {nomi:"Amortizatsiya (Amortization)",tarjima:"Aktivning qiymatini vaqt o'tishi bilan hisobdan chiqarish",izoh:"Amortizatsiya — asosiy vositalar (mashina, bino) qiymatini foydalanish muddati davomida xarajatlarga o'tkazish.",misol:"Masalan: 10 mln so'mlik mashina 5 yilga amortizatsiya qilinsa, har yili 2 mln so'm xarajat hisoblanadi."},
+  {nomi:"Lizing (Leasing)",tarjima:"Mulkni vaqtinchalik foydalanish uchun ijaraga berish",izoh:"Lizing — mulk egasi (lizingdavuvchi) mulkni foydalanuvchiga (lizingoluvchi) muayyan to'lov evaziga berish.",misol:"Masalan: Avtomobil lizingi — mashina narxini to'liq to'lamasdan oylik to'lov bilan foydalanish."},
+  {nomi:"Faktoring (Factoring)",tarjima:"Debitorlik qarzlarini uchinchi shaxsga sotish",izoh:"Faktoring — korxona o'z debitorlik qarzlarini (kelajakdagi tushumlarini) chegirma bilan faktorga sotadi.",misol:"Masalan: 30 kun ichida 100 mln kelishi kerak, lekin hozir pul kerak — faktorga 95 mlnga sotasiz."},
+  {nomi:"Franchayzing (Franchising)",tarjima:"Brend va biznes modelini boshqalarga litsenziya asosida berish",izoh:"Franchayzing — muvaffaqiyatli biznes modeli va brendni boshqa tadbirkorlarga to'lov evaziga berish tizimi.",misol:"Masalan: McDonald's, Subway — franchayzing orqali butun dunyoga tarqalgan."},
+  {nomi:"Bozor kapitalizatsiyasi (Market Cap)",tarjima:"Kompaniyaning bozor qiymati",izoh:"Bozor kapitalizatsiyasi = Aksiyalar soni × Aksiya narxi. Kompaniyaning bozordagi umumiy qiymatini ko'rsatadi.",misol:"Masalan: Apple 1 trillion dollar market cap bilan dunyo eng qimmat kompaniyalaridan biri."},
+  {nomi:"Likvidatsiya (Liquidation)",tarjima:"Kompaniyani yopish va aktivlarni sotish jarayoni",izoh:"Likvidatsiya — kompaniya to'lovga qodir bo'lmaganda aktivlar sotiladi, mablag'lar kreditorlar o'rtasida taqsimlanadi.",misol:"Masalan: Bankrot kompaniya aktivlari kim oshdi savdosida sotiladi."},
+  {nomi:"Forvard shartnoma (Forward Contract)",tarjima:"Kelajakdagi sanada belgilangan narxda sotib olish shartnomasi",izoh:"Forvard — ikki tomon o'rtasida kelajakdagi sanada ma'lum narxda aktiv sotib olish/sotish majburiyati.",misol:"Masalan: Fermer hosilni 6 oydan keyin belgilangan narxda sotish uchun forvard tuzadi."},
+  {nomi:"Fyuchers (Futures)",tarjima:"Standart sharoitlarda kelajakdagi bitimni bajarish majburiyati",izoh:"Fyuchers — forvardga o'xshash, lekin birjada standartlashtirilgan va savdoga qo'yilgan shartnomalar.",misol:"Masalan: Neft fyuchersi — kelgusi oyda ma'lum narxda neft olish majburiyati."},
+  {nomi:"Opsion (Option)",tarjima:"Aktivni belgilangan narxda sotib olish yoki sotish huquqi",izoh:"Opsion — ma'lum narxda aktiv sotib olish (call) yoki sotish (put) huquqi, lekin majburiyat emas.",misol:"Masalan: Call opsion: aksiyani 100 dollarda sotib olish huquqi. Narx 120 bo'lsa foyda, 80 bo'lsa opsion ishlatilmaydi."},
+  {nomi:"Kapital bozori (Capital Market)",tarjima:"Uzoq muddatli moliyaviy vositalar almashinadigan bozor",izoh:"Kapital bozori — aksiya va obligatsiyalar kabi uzoq muddatli instrumentlar sotiladi. Fond birjasi misol.",misol:"Masalan: Toshkent fond birjasi O'zbekistondagi kapital bozori."},
+  {nomi:"Pul bozori (Money Market)",tarjima:"Qisqa muddatli qarz va kredit operatsiyalari bozori",izoh:"Pul bozori — 1 yilgacha muddatli moliyaviy vositalar (depozitlar, veksellar) savdosi amalga oshiriladigan bozor.",misol:"Masalan: Banklar bir-biridan qisqa muddatga qarz oladi — bu pul bozori operatsiyasi."}
 ];
 
 function bugunKalit(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
@@ -308,6 +374,12 @@ function bugungiAtama(){
   var a=MOLIYAVIY_ATAMALAR[index];
   document.getElementById("atama-nomi").textContent=a.nomi;
   document.getElementById("atama-tarjima").textContent=a.tarjima;
+  document.getElementById("atama-izoh").textContent=a.izoh;
+  document.getElementById("atama-misol").textContent=a.misol;
+}
+
+function atamaToggle(){
+  document.getElementById("atama-detail").classList.toggle("ochiq");
 }
 
 function strikeHisobla(){
@@ -331,6 +403,7 @@ function tab(nom,btn){
   document.getElementById(nom).classList.remove("yashirin");
   btn.classList.add("active");
   if(nom=="oylik")oylikKorsatish();
+  if(nom=="hisob")hisobKorsatish();
 }
 
 function vazifalarYukla(){
@@ -338,7 +411,6 @@ function vazifalarYukla(){
   var saqlangan=olish(kalit);
   ["ielts","kitob","moliya"].forEach(function(g){document.getElementById("royxat-"+g).innerHTML=""});
   if(!saqlangan){
-    // Birinchi marta — standart vazifalar yuklanadi
     KUNLIK_VAZIFALAR.forEach(function(v){bandQosh(v.matn,false,v.guruh)});
     vazifalarSaqla();
   } else {
@@ -540,6 +612,47 @@ function bilmadim(){
 
 function natija_(){document.getElementById("natija").textContent="✓ Bildim: "+bildimSon+"   ✗ Bilmadim: "+bilmadimSon}
 
+// HISOB
+function hisobQosh(){
+  var nom=document.getElementById("hisob-nom").value.trim();
+  var summa=parseInt(document.getElementById("hisob-summa").value);
+  var tur=document.getElementById("hisob-tur").value;
+  if(nom==""||!summa)return;
+  var royxat=olish("hisob_"+bugunKalit())||[];
+  royxat.unshift({nom:nom,summa:summa,tur:tur,vaqt:new Date().toLocaleTimeString()});
+  saqlash("hisob_"+bugunKalit(),royxat);
+  document.getElementById("hisob-nom").value="";
+  document.getElementById("hisob-summa").value="";
+  hisobKorsatish();
+}
+
+function hisobOchir(i){
+  var royxat=olish("hisob_"+bugunKalit())||[];
+  royxat.splice(i,1);
+  saqlash("hisob_"+bugunKalit(),royxat);
+  hisobKorsatish();
+}
+
+function hisobKorsatish(){
+  var royxat=olish("hisob_"+bugunKalit())||[];
+  var daromad=0,xarajat=0;
+  royxat.forEach(function(h){if(h.tur=="daromad")daromad+=h.summa;else xarajat+=h.summa;});
+  document.getElementById("jami-daromad").textContent=daromad.toLocaleString();
+  document.getElementById("jami-xarajat").textContent=xarajat.toLocaleString();
+  var qoldiq=daromad-xarajat;
+  var el=document.getElementById("jami-qoldiq");
+  el.textContent=qoldiq.toLocaleString();
+  el.style.color=qoldiq>=0?"#3498db":"#e74c3c";
+  var div=document.getElementById("hisob-royxat");
+  div.innerHTML="";
+  royxat.forEach(function(h,i){
+    var item=document.createElement("div");
+    item.className="hisob-item"+(h.tur=="xarajat"?" xarajat":"");
+    item.innerHTML="<div class='hisob-item-info'><div class='hisob-item-nom'>"+(h.tur=="daromad"?"📈":"📉")+" "+h.nom+"</div><div class='hisob-item-sana'>"+h.vaqt+"</div></div><div class='hisob-item-summa'>"+(h.tur=="daromad"?"+":"-")+h.summa.toLocaleString()+" so'm</div><button class='ochir-hisob' onclick='hisobOchir("+i+")'>✕</button>";
+    div.appendChild(item);
+  });
+}
+
 function oylikKorsatish(){
   var d=new Date(),yil=d.getFullYear(),oy=d.getMonth(),bugunKun=d.getDate();
   document.getElementById("oy-nomi").textContent=OYLAR[oy]+" "+yil;
@@ -565,6 +678,7 @@ sozlarYukla();
 writingKorsatish();
 readingKorsatish();
 strikeHisobla();
+hisobKorsatish();
 </script>
 </body>
 </html>
