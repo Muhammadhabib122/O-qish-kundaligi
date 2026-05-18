@@ -11,6 +11,15 @@ body{font-family:Arial,sans-serif;background:#eef2f7;min-height:100vh;padding:20
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .header h1{font-size:20px;color:#2c3e50}
 .sana{font-size:13px;color:#888}
+.strike-box{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#ff6b35,#f7931e);border-radius:14px;padding:15px 20px;margin-bottom:20px;color:white}
+.strike-left{display:flex;align-items:center;gap:10px}
+.strike-fire{font-size:36px;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.strike-info h3{font-size:22px;font-weight:bold;margin:0}
+.strike-info p{font-size:12px;opacity:0.9;margin:0}
+.strike-right{text-align:right}
+.strike-right p{font-size:11px;opacity:0.8}
+.strike-right b{font-size:16px}
 .tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
 .tab{flex:1;padding:8px 4px;border:2px solid #e0e0e0;background:white;border-radius:10px;cursor:pointer;font-size:12px;color:#666;transition:all 0.2s;min-width:70px}
 .tab.active{background:#27ae60;border-color:#27ae60;color:white;font-weight:bold}
@@ -28,7 +37,6 @@ button:hover{background:#219a52}
 button.qizil{background:#e74c3c}
 button.qizil:hover{background:#c0392b}
 button.sariq{background:#f39c12;width:100%;margin-top:8px}
-button.sariq:hover{background:#d68910}
 button:disabled{background:#aaa;cursor:not-allowed}
 ul{list-style:none;margin-top:10px}
 li{display:flex;align-items:center;gap:12px;background:#f8f9fa;padding:12px 15px;margin-bottom:8px;border-radius:10px;cursor:pointer;border-left:4px solid #27ae60;transition:all 0.2s}
@@ -73,17 +81,41 @@ li.bajarildi .tick{background:#27ae60;color:white}
 .togri{border-left:3px solid #27ae60!important}
 .notogri{border-left:3px solid #e74c3c!important}
 .section-title{font-size:15px;font-weight:bold;color:#2c3e50;margin-bottom:12px}
-.ai-box{background:#f0f4ff;border-radius:10px;padding:15px;margin-bottom:15px;border:1px solid #d0d8ff}
-.ai-box p{font-size:13px;color:#555;margin-bottom:8px}
-.ai-natija{background:#e8f5e9;border-radius:10px;padding:15px;margin-top:10px;font-size:14px;border-left:4px solid #27ae60;line-height:1.6}
-.api-saved{font-size:12px;color:#27ae60;margin-top:5px}
+.congrats{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:20px;padding:30px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.2);z-index:1000;display:none}
+.congrats.show{display:block;animation:pop 0.3s ease}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(0.5)}100%{transform:translate(-50%,-50%) scale(1)}}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:none}
+.overlay.show{display:block}
 </style>
 </head>
 <body>
+
+<div class="overlay" id="overlay" onclick="congratsYop()"></div>
+<div class="congrats" id="congrats">
+  <div style="font-size:60px">🔥</div>
+  <h2 style="color:#f7931e;margin:10px 0" id="congrats-kun"></h2>
+  <p style="color:#666;font-size:14px">Ajoyib! Bugungi barcha vazifalarni bajardingiz!</p>
+  <button onclick="congratsYop()" style="margin-top:15px;background:#f7931e">Davom etish 💪</button>
+</div>
+
 <div class="container">
   <div class="header">
     <h1>📚 O'qish kundaligim</h1>
     <div class="sana" id="sana"></div>
+  </div>
+
+  <div class="strike-box">
+    <div class="strike-left">
+      <div class="strike-fire">🔥</div>
+      <div class="strike-info">
+        <h3 id="strike-son">0 kun</h3>
+        <p>Ketma-ketlik</p>
+      </div>
+    </div>
+    <div class="strike-right">
+      <p>Eng uzun</p>
+      <b id="strike-max">0 kun</b>
+    </div>
   </div>
 
   <div class="tabs">
@@ -95,7 +127,6 @@ li.bajarildi .tick{background:#27ae60;color:white}
     <button class="tab" onclick="tab('oylik',this)">📅 Oylik</button>
   </div>
 
-  <!-- VAZIFALAR -->
   <div id="vazifalar" class="sahifa">
     <div class="progress-box">
       <div class="progress-label"><span>Kunlik progress</span><span id="foiz">0%</span></div>
@@ -124,17 +155,8 @@ li.bajarildi .tick{background:#27ae60;color:white}
     </div>
   </div>
 
-  <!-- WRITING -->
   <div id="writing" class="sahifa yashirin">
     <p class="section-title">✍️ Writing vazifasi</p>
-    <div class="ai-box">
-      <p>🔑 Groq API kalitingiz (bir marta kiriting, saqlanadi):</p>
-      <div class="input-row">
-        <input type="password" id="api-kalit" placeholder="gsk_...">
-        <button onclick="kalitSaqla()">💾 Saqlash</button>
-      </div>
-      <div class="api-saved" id="api-holat"></div>
-    </div>
     <div class="input-row">
       <input type="text" id="writing-sarlavha" placeholder="Sarlavha (masalan: Task 2 - Education)">
     </div>
@@ -148,12 +170,9 @@ li.bajarildi .tick{background:#27ae60;color:white}
       <input type="number" id="writing-ball" placeholder="Ball (masalan: 6.5)" min="0" max="9" step="0.5">
       <button onclick="writingQosh()">💾 Saqlash</button>
     </div>
-    <button class="sariq" id="ai-btn" onclick="aiBalola()">🤖 AI bilan baholash</button>
-    <div id="ai-natija"></div>
     <div id="writing-royxat" style="margin-top:15px"></div>
   </div>
 
-  <!-- READING -->
   <div id="reading" class="sahifa yashirin">
     <p class="section-title">📖 Reading savol-javob</p>
     <div class="input-row">
@@ -180,7 +199,6 @@ li.bajarildi .tick{background:#27ae60;color:white}
     <div id="reading-royxat"></div>
   </div>
 
-  <!-- VOCABULARY -->
   <div id="vocabulary" class="sahifa yashirin">
     <div class="input-row">
       <input type="text" id="soz" placeholder="So'z (inglizcha)">
@@ -193,7 +211,6 @@ li.bajarildi .tick{background:#27ae60;color:white}
     <div id="sozlar"></div>
   </div>
 
-  <!-- FLASHCARD -->
   <div id="flashcard" class="sahifa yashirin">
     <div class="card">
       <div class="card-soz" id="card-soz">Ko'rsatish tugmasini bosing</div>
@@ -208,7 +225,6 @@ li.bajarildi .tick{background:#27ae60;color:white}
     <div class="natija" id="natija"></div>
   </div>
 
-  <!-- OYLIK -->
   <div id="oylik" class="sahifa yashirin">
     <div class="oylik-header">
       <h3 id="oy-nomi"></h3>
@@ -233,17 +249,21 @@ function sanaKorsatish(){
   document.getElementById("sana").textContent=KUNLAR_NOMI[d.getDay()==0?6:d.getDay()-1]+", "+d.getDate()+" "+OYLAR[d.getMonth()]+" "+d.getFullYear();
 }
 
-function kalitSaqla(){
-  var kalit=document.getElementById("api-kalit").value.trim();
-  if(kalit==""){alert("Kalit bo'sh!");return}
-  localStorage.setItem("groq_api",kalit);
-  document.getElementById("api-holat").textContent="✅ Groq kalit saqlandi!";
-  document.getElementById("api-kalit").value="";
-}
-
-function kalitYukla(){
-  var kalit=localStorage.getItem("groq_api")||"";
-  if(kalit){document.getElementById("api-holat").textContent="✅ Groq kalit saqlangan"}
+function strikeHisobla(){
+  var strike=0,max=olish("strike_max")||0;
+  var d=new Date();
+  var i=0;
+  while(i<365){
+    var kun=new Date(d);kun.setDate(d.getDate()-i);
+    var k="progress_"+kun.getFullYear()+"-"+(kun.getMonth()+1)+"-"+kun.getDate();
+    var f=olish(k)||0;
+    if(f>=100){strike++;i++;}
+    else if(i==0){i++;} // bugun hali tugamagan
+    else break;
+  }
+  if(strike>max){max=strike;saqlash("strike_max",max)}
+  document.getElementById("strike-son").textContent=strike+" kun";
+  document.getElementById("strike-max").textContent=max+" kun";
 }
 
 function tab(nom,btn){
@@ -252,7 +272,6 @@ function tab(nom,btn){
   document.getElementById(nom).classList.remove("yashirin");
   btn.classList.add("active");
   if(nom=="oylik")oylikKorsatish();
-  if(nom=="writing")kalitYukla();
 }
 
 function vazifalarYukla(){
@@ -305,6 +324,11 @@ function progressYangilansin(){
   var f=h==0?0:Math.round(b/h*100);
   document.getElementById("foiz").textContent=f+"%";
   document.getElementById("progress-fill").style.width=f+"%";
+  if(h>0&&f==100){
+    strikeHisobla();
+    var s=olish("congrats_"+bugunKalit());
+    if(!s){saqlash("congrats_"+bugunKalit(),true);congratsKorsatish();}
+  }
 }
 
 function kunProgressSaqla(){
@@ -312,6 +336,18 @@ function kunProgressSaqla(){
   var b=document.querySelectorAll("#vazifalar li.bajarildi").length;
   var f=h==0?0:Math.round(b/h*100);
   saqlash("progress_"+bugunKalit(),f);
+}
+
+function congratsKorsatish(){
+  var strike=document.getElementById("strike-son").textContent;
+  document.getElementById("congrats-kun").textContent="🔥 "+strike+" ketma-ket!";
+  document.getElementById("congrats").classList.add("show");
+  document.getElementById("overlay").classList.add("show");
+}
+
+function congratsYop(){
+  document.getElementById("congrats").classList.remove("show");
+  document.getElementById("overlay").classList.remove("show");
 }
 
 function writingQosh(){
@@ -456,49 +492,12 @@ function oylikKorsatish(){
   document.getElementById("oylik-foiz").textContent=(jami==0?0:Math.round(bajarilganKun/jami*100))+"%";
 }
 
-async function aiBalola(){
-  var essay=document.getElementById("writing-essay").value.trim();
-  if(essay==""){alert("Avval essay yozing!");return}
-  var kalit=localStorage.getItem("groq_api")||"";
-  if(kalit==""){alert("Avval Groq API kalitni kiriting va saqlang!");return}
-  var btn=document.getElementById("ai-btn");
-  var natija=document.getElementById("ai-natija");
-  btn.textContent="⏳ Baholanmoqda...";
-  btn.disabled=true;
-  natija.innerHTML="";
-  try{
-    var res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer "+kalit
-      },
-      body:JSON.stringify({
-        model:"llama-3.3-70b-versatile",
-        messages:[{
-          role:"user",
-          content:"Siz IELTS examiner siz. Quyidagi esseyni baholang va o'zbek tilida qisqacha fikr bering. Band score (0-9) bering va asosiy kamchiliklar va yaxshi tomonlarni ayting:\n\n"+essay
-        }],
-        max_tokens:500
-      })
-    });
-    var data=await res.json();
-    if(data.error){throw new Error(data.error.message)}
-    var javob=data.choices[0].message.content;
-    natija.innerHTML="<div class='ai-natija'><b>🤖 AI baholash natijasi:</b><br><br>"+javob.replace(/\n/g,"<br>")+"</div>";
-  }catch(e){
-    natija.innerHTML="<div style='color:red;padding:10px'>Xato: "+e.message+"</div>";
-  }
-  btn.textContent="🤖 AI bilan baholash";
-  btn.disabled=false;
-}
-
 sanaKorsatish();
 vazifalarYukla();
 sozlarYukla();
 writingKorsatish();
 readingKorsatish();
-kalitYukla();
+strikeHisobla();
 </script>
 </body>
 </html>
