@@ -29,8 +29,6 @@ button.qizil{background:#e74c3c}
 button.qizil:hover{background:#c0392b}
 button.sariq{background:#f39c12;width:100%;margin-top:8px}
 button.sariq:hover{background:#d68910}
-button.toq{background:#8e44ad;width:100%;margin-top:8px}
-button.toq:hover{background:#7d3c98}
 button:disabled{background:#aaa;cursor:not-allowed}
 ul{list-style:none;margin-top:10px}
 li{display:flex;align-items:center;gap:12px;background:#f8f9fa;padding:12px 15px;margin-bottom:8px;border-radius:10px;cursor:pointer;border-left:4px solid #27ae60;transition:all 0.2s}
@@ -129,16 +127,14 @@ li.bajarildi .tick{background:#27ae60;color:white}
   <!-- WRITING -->
   <div id="writing" class="sahifa yashirin">
     <p class="section-title">✍️ Writing vazifasi</p>
-
     <div class="ai-box">
-      <p>🔑 Gemini API kalitingiz (bir marta kiriting, saqlanadi):</p>
+      <p>🔑 Groq API kalitingiz (bir marta kiriting, saqlanadi):</p>
       <div class="input-row">
-        <input type="password" id="api-kalit" placeholder="AIzaSy...">
+        <input type="password" id="api-kalit" placeholder="gsk_...">
         <button onclick="kalitSaqla()">💾 Saqlash</button>
       </div>
       <div class="api-saved" id="api-holat"></div>
     </div>
-
     <div class="input-row">
       <input type="text" id="writing-sarlavha" placeholder="Sarlavha (masalan: Task 2 - Education)">
     </div>
@@ -240,14 +236,14 @@ function sanaKorsatish(){
 function kalitSaqla(){
   var kalit=document.getElementById("api-kalit").value.trim();
   if(kalit==""){alert("Kalit bo'sh!");return}
-  localStorage.setItem("gemini_api",kalit);
-  document.getElementById("api-holat").textContent="✅ Kalit saqlandi!";
+  localStorage.setItem("groq_api",kalit);
+  document.getElementById("api-holat").textContent="✅ Groq kalit saqlandi!";
   document.getElementById("api-kalit").value="";
 }
 
 function kalitYukla(){
-  var kalit=localStorage.getItem("gemini_api")||"";
-  if(kalit){document.getElementById("api-holat").textContent="✅ Kalit saqlangan"}
+  var kalit=localStorage.getItem("groq_api")||"";
+  if(kalit){document.getElementById("api-holat").textContent="✅ Groq kalit saqlangan"}
 }
 
 function tab(nom,btn){
@@ -463,22 +459,32 @@ function oylikKorsatish(){
 async function aiBalola(){
   var essay=document.getElementById("writing-essay").value.trim();
   if(essay==""){alert("Avval essay yozing!");return}
-  var kalit=localStorage.getItem("gemini_api")||"";
-  if(kalit==""){alert("Avval API kalitni kiriting va saqlang!");return}
+  var kalit=localStorage.getItem("groq_api")||"";
+  if(kalit==""){alert("Avval Groq API kalitni kiriting va saqlang!");return}
   var btn=document.getElementById("ai-btn");
   var natija=document.getElementById("ai-natija");
   btn.textContent="⏳ Baholanmoqda...";
   btn.disabled=true;
   natija.innerHTML="";
   try{
-    var res=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="+kalit,{
+    var res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({contents:[{parts:[{text:"Siz IELTS examiner siz. Quyidagi esseyni baholang va o'zbek tilida qisqacha fikr bering. Band score (0-9) bering va asosiy kamchiliklar va yaxshi tomonlarni ayting:\n\n"+essay}]}]})
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+kalit
+      },
+      body:JSON.stringify({
+        model:"llama3-8b-8192",
+        messages:[{
+          role:"user",
+          content:"Siz IELTS examiner siz. Quyidagi esseyni baholang va o'zbek tilida qisqacha fikr bering. Band score (0-9) bering va asosiy kamchiliklar va yaxshi tomonlarni ayting:\n\n"+essay
+        }],
+        max_tokens:500
+      })
     });
     var data=await res.json();
     if(data.error){throw new Error(data.error.message)}
-    var javob=data.candidates[0].content.parts[0].text;
+    var javob=data.choices[0].message.content;
     natija.innerHTML="<div class='ai-natija'><b>🤖 AI baholash natijasi:</b><br><br>"+javob.replace(/\n/g,"<br>")+"</div>";
   }catch(e){
     natija.innerHTML="<div style='color:red;padding:10px'>Xato: "+e.message+"</div>";
