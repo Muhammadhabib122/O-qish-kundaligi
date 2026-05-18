@@ -36,7 +36,6 @@ button{padding:10px 16px;background:#27ae60;color:white;border:none;border-radiu
 button:hover{background:#219a52}
 button.qizil{background:#e74c3c}
 button.qizil:hover{background:#c0392b}
-button.sariq{background:#f39c12;width:100%;margin-top:8px}
 button:disabled{background:#aaa;cursor:not-allowed}
 ul{list-style:none;margin-top:10px}
 li{display:flex;align-items:center;gap:12px;background:#f8f9fa;padding:12px 15px;margin-bottom:8px;border-radius:10px;cursor:pointer;border-left:4px solid #27ae60;transition:all 0.2s}
@@ -86,6 +85,10 @@ li.bajarildi .tick{background:#27ae60;color:white}
 @keyframes pop{0%{transform:translate(-50%,-50%) scale(0.5)}100%{transform:translate(-50%,-50%) scale(1)}}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:none}
 .overlay.show{display:block}
+.kunlik-atama{background:linear-gradient(135deg,#667eea,#764ba2);border-radius:14px;padding:15px 20px;margin-bottom:20px;color:white}
+.kunlik-atama h4{font-size:13px;opacity:0.9;margin-bottom:5px}
+.kunlik-atama .atama{font-size:18px;font-weight:bold}
+.kunlik-atama .atama-tarjima{font-size:13px;opacity:0.9;margin-top:4px}
 </style>
 </head>
 <body>
@@ -118,6 +121,12 @@ li.bajarildi .tick{background:#27ae60;color:white}
     </div>
   </div>
 
+  <div class="kunlik-atama">
+    <h4>💰 Bugungi moliyaviy atama</h4>
+    <div class="atama" id="atama-nomi"></div>
+    <div class="atama-tarjima" id="atama-tarjima"></div>
+  </div>
+
   <div class="tabs">
     <button class="tab active" onclick="tab('vazifalar',this)">📋 Vazifalar</button>
     <button class="tab" onclick="tab('writing',this)">✍️ Writing</button>
@@ -133,7 +142,7 @@ li.bajarildi .tick{background:#27ae60;color:white}
       <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
     </div>
     <div class="input-row">
-      <input type="text" id="vazifa" placeholder="Vazifa yozing...">
+      <input type="text" id="vazifa" placeholder="Qo'shimcha vazifa yozing...">
       <select id="guruh">
         <option value="ielts">📚 IELTS</option>
         <option value="kitob">📖 Kitob</option>
@@ -240,6 +249,50 @@ var bildimSon=0,bilmadimSon=0,currentIndex=0;
 var OYLAR=["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
 var KUNLAR_NOMI=["Du","Se","Chor","Pay","Ju","Shan","Yak"];
 
+var KUNLIK_VAZIFALAR=[
+  {matn:"Reading — 40 daqiqa",guruh:"ielts"},
+  {matn:"Writing — 40 daqiqa",guruh:"ielts"},
+  {matn:"Vocabulary — 10 ta so'z yodlash",guruh:"ielts"},
+  {matn:"Grammar — 1 qoida + mashq",guruh:"ielts"},
+  {matn:"Bank ishi o'quv qo'llanma — 13 bet",guruh:"kitob"},
+  {matn:"Falsafa — 10 bet",guruh:"kitob"},
+  {matn:"Kunlik daromad-xarajat yozish",guruh:"moliya"},
+  {matn:"1 ta moliyaviy tushuncha o'rganish",guruh:"moliya"}
+];
+
+var MOLIYAVIY_ATAMALAR=[
+  {nomi:"Likvidlik (Liquidity)",tarjima:"Aktivni tezda naqd pulga aylantirish imkoniyati"},
+  {nomi:"Inflyatsiya (Inflation)",tarjima:"Narxlarning umumiy darajasi oshishi, pulning qadrsizlanishi"},
+  {nomi:"Kapital (Capital)",tarjima:"Biznesga investitsiya qilingan pul yoki aktivlar"},
+  {nomi:"Dividend",tarjima:"Aktsiyadorlarga kompaniya foydasidan to'lanadigan ulush"},
+  {nomi:"Kredit reytingi (Credit Rating)",tarjima:"Qarz oluvchining to'lov qobiliyatini baholash"},
+  {nomi:"Portfel (Portfolio)",tarjima:"Investor uchun turli moliyaviy aktivlar to'plami"},
+  {nomi:"Foiz stavkasi (Interest Rate)",tarjima:"Qarz pulidan olinadigan yoki to'lanadigan foiz miqdori"},
+  {nomi:"Depozit (Deposit)",tarjima:"Bankka saqlanishga qo'yilgan pul mablag'lari"},
+  {nomi:"Ipoteka (Mortgage)",tarjima:"Ko'chmas mulk garovi ostida beriladigan uzoq muddatli kredit"},
+  {nomi:"Valyuta kursi (Exchange Rate)",tarjima:"Bir valyutaning boshqa valyutaga nisbatan qiymati"},
+  {nomi:"Byudjet (Budget)",tarjima:"Daromad va xarajatlarni rejalashtirilgan hisob-kitobi"},
+  {nomi:"Aktiv (Asset)",tarjima:"Kompaniya yoki shaxsga tegishli qimmatli mulk"},
+  {nomi:"Passiv (Liability)",tarjima:"Kompaniya yoki shaxsning qarzlari va majburiyatlari"},
+  {nomi:"Rentabellik (Profitability)",tarjima:"Investitsiyadan olinadigan daromad darajasi"},
+  {nomi:"Diversifikatsiya (Diversification)",tarjima:"Xavfni kamaytirish uchun turli sohalarga sarmoya qo'yish"},
+  {nomi:"Emissiya (Emission)",tarjima:"Davlat yoki kompaniya tomonidan qimmatli qog'ozlar chiqarish"},
+  {nomi:"Qimmatli qog'ozlar (Securities)",tarjima:"Aksiya, obligatsiya kabi moliyaviy hujjatlar"},
+  {nomi:"Defolt (Default)",tarjima:"Qarzni to'lay olmaslik holati"},
+  {nomi:"Subsidiya (Subsidy)",tarjima:"Davlat tomonidan beriladigan moliyaviy yordam"},
+  {nomi:"Amortizatsiya (Amortization)",tarjima:"Aktivning qiymatini vaqt o'tishi bilan hisobdan chiqarish"},
+  {nomi:"Lizing (Leasing)",tarjima:"Mulkni vaqtinchalik foydalanish uchun ijaraga berish"},
+  {nomi:"Faktoring (Factoring)",tarjima:"Debitorlik qarzlarini uchinchi shaxsga sotish"},
+  {nomi:"Franchayzing (Franchising)",tarjima:"Brend va biznes modelini boshqalarga litsenziya asosida berish"},
+  {nomi:"Marketkap (Market Cap)",tarjima:"Kompaniyaning bozor qiymati — aksiyalar soni × narxi"},
+  {nomi:"Likvidatsiya (Liquidation)",tarjima:"Kompaniyani yopish va aktivlarni sotish jarayoni"},
+  {nomi:"Forvard shartnoma (Forward Contract)",tarjima:"Kelajakdagi sanada belgilangan narxda sotib olish shartnomasi"},
+  {nomi:"Fyuchers (Futures)",tarjima:"Standart sharoitlarda kelajakdagi bitimni bajarish majburiyati"},
+  {nomi:"Opsion (Option)",tarjima:"Aktivni belgilangan narxda sotib olish yoki sotish huquqi"},
+  {nomi:"Kapital bozori (Capital Market)",tarjima:"Uzoq muddatli moliyaviy vositalar almashinadigan bozor"},
+  {nomi:"Pul bozori (Money Market)",tarjima:"Qisqa muddatli qarz va kredit operatsiyalari bozori"}
+];
+
 function bugunKalit(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
 function saqlash(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function olish(k){var m=localStorage.getItem(k);return m?JSON.parse(m):null}
@@ -249,17 +302,23 @@ function sanaKorsatish(){
   document.getElementById("sana").textContent=KUNLAR_NOMI[d.getDay()==0?6:d.getDay()-1]+", "+d.getDate()+" "+OYLAR[d.getMonth()]+" "+d.getFullYear();
 }
 
+function bugungiAtama(){
+  var d=new Date();
+  var index=d.getDate()%MOLIYAVIY_ATAMALAR.length;
+  var a=MOLIYAVIY_ATAMALAR[index];
+  document.getElementById("atama-nomi").textContent=a.nomi;
+  document.getElementById("atama-tarjima").textContent=a.tarjima;
+}
+
 function strikeHisobla(){
   var strike=0,max=olish("strike_max")||0;
   var d=new Date();
-  var i=0;
+  var i=1;
   while(i<365){
     var kun=new Date(d);kun.setDate(d.getDate()-i);
     var k="progress_"+kun.getFullYear()+"-"+(kun.getMonth()+1)+"-"+kun.getDate();
     var f=olish(k)||0;
-    if(f>=100){strike++;i++;}
-    else if(i==0){i++;} // bugun hali tugamagan
-    else break;
+    if(f>=100){strike++;i++;}else break;
   }
   if(strike>max){max=strike;saqlash("strike_max",max)}
   document.getElementById("strike-son").textContent=strike+" kun";
@@ -275,9 +334,16 @@ function tab(nom,btn){
 }
 
 function vazifalarYukla(){
-  var s=olish("vazifalar_"+bugunKalit())||[];
+  var kalit="vazifalar_"+bugunKalit();
+  var saqlangan=olish(kalit);
   ["ielts","kitob","moliya"].forEach(function(g){document.getElementById("royxat-"+g).innerHTML=""});
-  s.forEach(function(v){bandQosh(v.matn,v.bajarildi,v.guruh)});
+  if(!saqlangan){
+    // Birinchi marta — standart vazifalar yuklanadi
+    KUNLIK_VAZIFALAR.forEach(function(v){bandQosh(v.matn,false,v.guruh)});
+    vazifalarSaqla();
+  } else {
+    saqlangan.forEach(function(v){bandQosh(v.matn,v.bajarildi,v.guruh)});
+  }
   progressYangilansin();
 }
 
@@ -493,6 +559,7 @@ function oylikKorsatish(){
 }
 
 sanaKorsatish();
+bugungiAtama();
 vazifalarYukla();
 sozlarYukla();
 writingKorsatish();
