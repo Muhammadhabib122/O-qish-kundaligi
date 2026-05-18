@@ -29,6 +29,8 @@ button.qizil{background:#e74c3c}
 button.qizil:hover{background:#c0392b}
 button.sariq{background:#f39c12;width:100%;margin-top:8px}
 button.sariq:hover{background:#d68910}
+button.toq{background:#8e44ad;width:100%;margin-top:8px}
+button.toq:hover{background:#7d3c98}
 button:disabled{background:#aaa;cursor:not-allowed}
 ul{list-style:none;margin-top:10px}
 li{display:flex;align-items:center;gap:12px;background:#f8f9fa;padding:12px 15px;margin-bottom:8px;border-radius:10px;cursor:pointer;border-left:4px solid #27ae60;transition:all 0.2s}
@@ -70,11 +72,13 @@ li.bajarildi .tick{background:#27ae60;color:white}
 .reading-card h4{font-size:14px;color:#2c3e50;margin-bottom:8px}
 .savol-item{background:white;border-radius:8px;padding:10px;margin-bottom:8px}
 .savol-item p{font-size:13px;color:#333;margin-bottom:6px}
-.savol-item input{width:100%;font-size:13px;padding:6px 10px}
 .togri{border-left:3px solid #27ae60!important}
 .notogri{border-left:3px solid #e74c3c!important}
 .section-title{font-size:15px;font-weight:bold;color:#2c3e50;margin-bottom:12px}
-.ai-natija{background:#e8f5e9;border-radius:10px;padding:15px;margin-top:10px;font-size:14px;border-left:4px solid #27ae60}
+.ai-box{background:#f0f4ff;border-radius:10px;padding:15px;margin-bottom:15px;border:1px solid #d0d8ff}
+.ai-box p{font-size:13px;color:#555;margin-bottom:8px}
+.ai-natija{background:#e8f5e9;border-radius:10px;padding:15px;margin-top:10px;font-size:14px;border-left:4px solid #27ae60;line-height:1.6}
+.api-saved{font-size:12px;color:#27ae60;margin-top:5px}
 </style>
 </head>
 <body>
@@ -125,8 +129,18 @@ li.bajarildi .tick{background:#27ae60;color:white}
   <!-- WRITING -->
   <div id="writing" class="sahifa yashirin">
     <p class="section-title">✍️ Writing vazifasi</p>
+
+    <div class="ai-box">
+      <p>🔑 Gemini API kalitingiz (bir marta kiriting, saqlanadi):</p>
+      <div class="input-row">
+        <input type="password" id="api-kalit" placeholder="AIzaSy...">
+        <button onclick="kalitSaqla()">💾 Saqlash</button>
+      </div>
+      <div class="api-saved" id="api-holat"></div>
+    </div>
+
     <div class="input-row">
-      <input type="text" id="writing-sarlavha" placeholder="Sarlavha (masalan: Task 1 - Bar chart)">
+      <input type="text" id="writing-sarlavha" placeholder="Sarlavha (masalan: Task 2 - Education)">
     </div>
     <div class="input-row">
       <input type="text" id="writing-rasm-url" placeholder="Rasm URL (ixtiyoriy)">
@@ -209,7 +223,6 @@ li.bajarildi .tick{background:#27ae60;color:white}
 </div>
 
 <script>
-var GEMINI_API = "AIzaSyAnPa5jA9F1MKFQ5bwZjg_YRHMOWUQgdnQ";
 var sozlarRoyxati=[];
 var bildimSon=0,bilmadimSon=0,currentIndex=0;
 var OYLAR=["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
@@ -224,12 +237,26 @@ function sanaKorsatish(){
   document.getElementById("sana").textContent=KUNLAR_NOMI[d.getDay()==0?6:d.getDay()-1]+", "+d.getDate()+" "+OYLAR[d.getMonth()]+" "+d.getFullYear();
 }
 
+function kalitSaqla(){
+  var kalit=document.getElementById("api-kalit").value.trim();
+  if(kalit==""){alert("Kalit bo'sh!");return}
+  localStorage.setItem("gemini_api",kalit);
+  document.getElementById("api-holat").textContent="✅ Kalit saqlandi!";
+  document.getElementById("api-kalit").value="";
+}
+
+function kalitYukla(){
+  var kalit=localStorage.getItem("gemini_api")||"";
+  if(kalit){document.getElementById("api-holat").textContent="✅ Kalit saqlangan"}
+}
+
 function tab(nom,btn){
   document.querySelectorAll(".sahifa").forEach(function(s){s.classList.add("yashirin")});
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});
   document.getElementById(nom).classList.remove("yashirin");
   btn.classList.add("active");
   if(nom=="oylik")oylikKorsatish();
+  if(nom=="writing")kalitYukla();
 }
 
 function vazifalarYukla(){
@@ -436,22 +463,25 @@ function oylikKorsatish(){
 async function aiBalola(){
   var essay=document.getElementById("writing-essay").value.trim();
   if(essay==""){alert("Avval essay yozing!");return}
+  var kalit=localStorage.getItem("gemini_api")||"";
+  if(kalit==""){alert("Avval API kalitni kiriting va saqlang!");return}
   var btn=document.getElementById("ai-btn");
   var natija=document.getElementById("ai-natija");
   btn.textContent="⏳ Baholanmoqda...";
   btn.disabled=true;
   natija.innerHTML="";
   try{
-    var res=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+GEMINI_API,{
+    var res=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+kalit,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({contents:[{parts:[{text:"Siz IELTS examiner siz. Quyidagi esseyni baholang va o'zbek tilida qisqacha fikr bering. Band score (0-9) bering va asosiy kamchiliklar va yaxshi tomonlarni ayting:\n\n"+essay}]}]})
     });
     var data=await res.json();
+    if(data.error){throw new Error(data.error.message)}
     var javob=data.candidates[0].content.parts[0].text;
     natija.innerHTML="<div class='ai-natija'><b>🤖 AI baholash natijasi:</b><br><br>"+javob.replace(/\n/g,"<br>")+"</div>";
   }catch(e){
-    natija.innerHTML="<div style='color:red;padding:10px'>Xato yuz berdi. API kalitni tekshiring.</div>";
+    natija.innerHTML="<div style='color:red;padding:10px'>Xato: "+e.message+"</div>";
   }
   btn.textContent="🤖 AI bilan baholash";
   btn.disabled=false;
@@ -462,6 +492,7 @@ vazifalarYukla();
 sozlarYukla();
 writingKorsatish();
 readingKorsatish();
+kalitYukla();
 </script>
 </body>
 </html>
