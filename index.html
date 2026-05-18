@@ -7,9 +7,9 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#eef2f7;min-height:100vh;padding:20px 15px}
-.container{max-width:1200px;margin:0 auto;background:white;border-radius:16px;padding:25px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.container{max-width:900px;margin:0 auto;background:white;border-radius:16px;padding:25px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.header h1{font-size:20px;color:#2c3e50}
+.header h1{font-size:22px;color:#2c3e50}
 .sana{font-size:13px;color:#888}
 .strike-box{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#ff6b35,#f7931e);border-radius:14px;padding:15px 20px;margin-bottom:20px;color:white}
 .strike-left{display:flex;align-items:center;gap:10px}
@@ -38,7 +38,7 @@ button.qizil{background:#e74c3c}
 button.qizil:hover{background:#c0392b}
 ul{list-style:none;margin-top:10px}
 li{display:flex;align-items:center;gap:12px;background:#f8f9fa;padding:12px 15px;margin-bottom:8px;border-radius:10px;border-left:4px solid #27ae60;transition:all 0.3s}
-li.bajarildi{background:#f0fff4;border-left-color:#27ae60}
+li.bajarildi{background:#f0fff4}
 li.bajarildi .nom{text-decoration:line-through;color:#999}
 .tick{width:26px;height:26px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;flex-shrink:0;cursor:pointer;transition:all 0.2s}
 li.bajarildi .tick{background:#27ae60;border-color:#27ae60;color:white}
@@ -56,17 +56,6 @@ li.bajarildi .tick{background:#27ae60;border-color:#27ae60;color:white}
 .card-misol{font-size:13px;color:#999;margin-top:8px;font-style:italic}
 .card-buttons{display:flex;gap:8px;justify-content:center}
 .natija{text-align:center;margin-top:15px;font-size:14px;color:#555;font-weight:bold}
-.oylik-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
-.oylik-header h3{font-size:16px;color:#2c3e50}
-.oylik-progress{font-size:14px;color:#27ae60;font-weight:bold}
-.kunlar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.kun{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;border:1px solid #e0e0e0;background:#f8f9fa;color:#666}
-.kun.bugun{border:2px solid #27ae60;color:#27ae60;font-weight:bold}
-.kun.bajarildi-kun{background:#27ae60;color:white;border-color:#27ae60}
-.kun.qisman{background:#f39c12;color:white;border-color:#f39c12}
-.kun.utgan{background:#ecf0f1;color:#bbb}
-.kun-raqam{font-size:13px;font-weight:bold}
-.kun-foiz{font-size:10px;margin-top:2px}
 .writing-card{background:#f8f9fa;border-radius:12px;padding:15px;margin-bottom:12px;border-left:4px solid #9b59b6}
 .writing-card h4{font-size:14px;color:#2c3e50;margin-bottom:8px}
 .writing-essay{font-size:13px;color:#333;background:white;padding:10px;border-radius:8px;white-space:pre-wrap}
@@ -107,15 +96,64 @@ li.bajarildi .tick{background:#27ae60;border-color:#27ae60;color:white}
 .hisob-item.xarajat .hisob-item-summa{color:#e74c3c}
 .ochir-hisob{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:0}
 .ochir-hisob:hover{color:#e74c3c;background:none}
+
+/* OYLIK KALENDAR */
+.oylik-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.oylik-header h3{font-size:18px;color:#2c3e50;font-weight:bold}
+.oylik-progress{font-size:14px;color:#27ae60;font-weight:bold}
+.kun-nom-row{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+.kun-nom{text-align:center;font-size:12px;font-weight:bold;color:#888;padding:5px 0}
+.kunlar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.kun{border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 5px;border:1px solid #e0e0e0;background:#f8f9fa;color:#666;cursor:pointer;transition:all 0.2s;min-height:60px}
+.kun:hover{transform:scale(1.05);box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.kun.bugun{border:2px solid #27ae60;color:#27ae60;font-weight:bold;background:#f0fff4}
+.kun.bajarildi-kun{background:#27ae60;color:white;border-color:#27ae60}
+.kun.qisman{background:#f39c12;color:white;border-color:#f39c12}
+.kun.utgan{background:#ecf0f1;color:#bbb}
+.kun.bosh{background:transparent;border-color:transparent;cursor:default}
+.kun.bosh:hover{transform:none;box-shadow:none}
+.kun-raqam{font-size:15px;font-weight:bold}
+.kun-foiz{font-size:11px;margin-top:3px}
+.kun-emoji{font-size:16px;margin-top:2px}
+
+/* KUN DETAIL MODAL */
+.kun-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:16px;padding:25px;width:90%;max-width:450px;max-height:80vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,0.2);z-index:1000;display:none}
+.kun-modal.show{display:block;animation:pop 0.3s ease}
+.kun-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.kun-modal-header h3{font-size:16px;color:#2c3e50}
+.modal-yop{background:none;border:none;font-size:20px;cursor:pointer;color:#888;padding:0}
+.modal-yop:hover{background:none;color:#333}
+.modal-progress{background:#f8f9fa;border-radius:10px;padding:12px;margin-bottom:15px;text-align:center}
+.modal-progress .big{font-size:28px;font-weight:bold;color:#27ae60}
+.modal-vazifa-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f8f9fa;border-radius:8px;margin-bottom:6px}
+.modal-vazifa-item.done{background:#f0fff4}
+.modal-vazifa-item.done .m-nom{text-decoration:line-through;color:#999}
+.m-tick{width:20px;height:20px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;flex-shrink:0}
+.modal-vazifa-item.done .m-tick{background:#27ae60;border-color:#27ae60;color:white}
+.m-nom{font-size:13px;color:#333;flex:1}
+.m-guruh{font-size:11px;padding:2px 8px;border-radius:10px;background:#e8f5e9;color:#27ae60}
 </style>
 </head>
 <body>
-<div class="overlay" id="overlay" onclick="congratsYop()"></div>
+<div class="overlay" id="overlay" onclick="modalYop()"></div>
+
 <div class="congrats" id="congrats">
   <div style="font-size:60px">🔥</div>
   <h2 style="color:#f7931e;margin:10px 0" id="congrats-kun"></h2>
   <p style="color:#666;font-size:14px">Ajoyib! Bugungi barcha vazifalarni bajardingiz!</p>
   <button onclick="congratsYop()" style="margin-top:15px;background:#f7931e">Davom etish 💪</button>
+</div>
+
+<div class="kun-modal" id="kun-modal">
+  <div class="kun-modal-header">
+    <h3 id="modal-sana"></h3>
+    <button class="modal-yop" onclick="kunModalYop()">✕</button>
+  </div>
+  <div class="modal-progress">
+    <div class="big" id="modal-foiz">0%</div>
+    <div style="font-size:13px;color:#888;margin-top:4px" id="modal-bajarildi"></div>
+  </div>
+  <div id="modal-vazifalar"></div>
 </div>
 
 <div class="container">
@@ -282,6 +320,15 @@ li.bajarildi .tick{background:#27ae60;border-color:#27ae60;color:white}
       <h3 id="oy-nomi"></h3>
       <div class="oylik-progress"><span id="oylik-foiz">0%</span> bajarildi</div>
     </div>
+    <div class="kun-nom-row">
+      <div class="kun-nom">Du</div>
+      <div class="kun-nom">Se</div>
+      <div class="kun-nom">Chor</div>
+      <div class="kun-nom">Pay</div>
+      <div class="kun-nom">Ju</div>
+      <div class="kun-nom">Shan</div>
+      <div class="kun-nom">Yak</div>
+    </div>
     <div class="kunlar" id="kunlar"></div>
   </div>
 </div>
@@ -308,35 +355,36 @@ var MOLIYAVIY_ATAMALAR=[
   {nomi:"Inflyatsiya (Inflation)",tarjima:"Narxlarning umumiy darajasi oshishi",izoh:"Inflyatsiya — vaqt o'tishi bilan tovar va xizmatlar narxining oshishi. Bu pulning xarid qobiliyatini kamaytiradi.",misol:"Masalan: Yil boshida non 5000 so'm bo'lsa, yil oxirida 5500 so'm bo'lishi 10% inflyatsiyadir."},
   {nomi:"Kapital (Capital)",tarjima:"Biznesga investitsiya qilingan pul yoki aktivlar",izoh:"Kapital — ishlab chiqarish yoki investitsiya maqsadida foydalaniladigan moliyaviy resurslar va aktivlar.",misol:"Masalan: Kompaniya 100 mln so'm kapital bilan ishga tushdi."},
   {nomi:"Dividend",tarjima:"Aktsiyadorlarga kompaniya foydasidan to'lanadigan ulush",izoh:"Dividend — kompaniya o'z foydasining bir qismini aktsiyadorlarga ulashishi.",misol:"Masalan: 100 ta aksiya × 1000 so'm dividend = 100,000 so'm olasiz."},
-  {nomi:"Kredit reytingi (Credit Rating)",tarjima:"Qarz oluvchining to'lov qobiliyatini baholash",izoh:"Kredit reytingi — shaxs yoki kompaniyaning qarzlarini to'lay olish qobiliyatini ko'rsatuvchi baho.",misol:"Masalan: AAA eng yuqori reyting, D esa defolt holatini bildiradi."},
+  {nomi:"Kredit reytingi",tarjima:"Qarz oluvchining to'lov qobiliyatini baholash",izoh:"Kredit reytingi — shaxs yoki kompaniyaning qarzlarini to'lay olish qobiliyatini ko'rsatuvchi baho.",misol:"Masalan: AAA eng yuqori reyting, D esa defolt holatini bildiradi."},
   {nomi:"Portfel (Portfolio)",tarjima:"Turli moliyaviy aktivlar to'plami",izoh:"Investitsion portfel — aksiyalar, obligatsiyalar va boshqa aktivlarning to'plami.",misol:"Masalan: 50% aksiya, 30% obligatsiya, 20% oltin — balanced portfolio."},
-  {nomi:"Foiz stavkasi (Interest Rate)",tarjima:"Qarz pulidan olinadigan foiz miqdori",izoh:"Foiz stavkasi — qarz beruvchi tomonidan qarz oluvchidan talab qilinadigan to'lov.",misol:"Masalan: 1 mln so'mga 20% foiz = yilda 200,000 so'm foiz to'laysiz."},
+  {nomi:"Foiz stavkasi",tarjima:"Qarz pulidan olinadigan foiz miqdori",izoh:"Foiz stavkasi — qarz beruvchi tomonidan qarz oluvchidan talab qilinadigan to'lov.",misol:"Masalan: 1 mln so'mga 20% foiz = yilda 200,000 so'm foiz to'laysiz."},
   {nomi:"Depozit (Deposit)",tarjima:"Bankka saqlanishga qo'yilgan pul",izoh:"Bank depoziti — pulni bankka ma'lum muddat uchun qo'yish. Bank foiz to'laydi.",misol:"Masalan: 10 mln so'mni 15% da qo'ysangiz, yil oxirida 11.5 mln olasiz."},
   {nomi:"Ipoteka (Mortgage)",tarjima:"Ko'chmas mulk garovi ostidagi uzoq muddatli kredit",izoh:"Ipoteka — uy sotib olish uchun bank tomonidan beriladigan uzoq muddatli kredit.",misol:"Masalan: 500 mln uy uchun 20% boshlang'ich to'lov, 80% ni 20 yilga ipoteka."},
-  {nomi:"Valyuta kursi (Exchange Rate)",tarjima:"Bir valyutaning boshqasiga nisbatan qiymati",izoh:"Valyuta kursi — bir mamlakat pulining boshqa mamlakat puliga nisbati.",misol:"Masalan: 1 USD = 12,800 so'm bo'lsa, 100$ = 1,280,000 so'm."},
+  {nomi:"Valyuta kursi",tarjima:"Bir valyutaning boshqasiga nisbatan qiymati",izoh:"Valyuta kursi — bir mamlakat pulining boshqa mamlakat puliga nisbati.",misol:"Masalan: 1 USD = 12,800 so'm bo'lsa, 100$ = 1,280,000 so'm."},
   {nomi:"Byudjet (Budget)",tarjima:"Daromad va xarajatlarning rejalashtirilgan hisobi",izoh:"Byudjet — ma'lum davr uchun kutilgan daromad va rejalashtirilgan xarajatlar rejasi.",misol:"Masalan: Maosh 5 mln, ijara 1.5 mln, ovqat 1 mln — 2.5 mln tejash maqsad."},
   {nomi:"Aktiv (Asset)",tarjima:"Kompaniya yoki shaxsga tegishli qimmatli mulk",izoh:"Aktivlar — pul, ko'chmas mulk, aksiyalar kabi qimmatga ega narsalar.",misol:"Masalan: Uy, mashina, bank hisobidagi pul, aksiyalar — bularning hammasi aktiv."},
   {nomi:"Passiv (Liability)",tarjima:"Kompaniya yoki shaxsning qarzlari",izoh:"Passivlar — to'lanishi kerak bo'lgan qarzlar va majburiyatlar.",misol:"Masalan: Bank krediti, ipoteka, to'lanmagan hisob-fakturalar — passiv."},
-  {nomi:"Rentabellik (Profitability)",tarjima:"Investitsiyadan olinadigan daromad darajasi",izoh:"Rentabellik — sarflangan mablag'ga nisbatan olingan daromad nisbati.",misol:"Masalan: 1 mln sarflab 200,000 foyda = 20% rentabellik."},
-  {nomi:"Diversifikatsiya (Diversification)",tarjima:"Xavfni kamaytirish uchun turli sohalarga sarmoya",izoh:"Diversifikatsiya — 'barcha tuxumlarni bir savatga qo'yma' tamoyili.",misol:"Masalan: Faqat bitta kompaniya emas, 10 ta turli kompaniyaga sarmoya."},
+  {nomi:"Rentabellik",tarjima:"Investitsiyadan olinadigan daromad darajasi",izoh:"Rentabellik — sarflangan mablag'ga nisbatan olingan daromad nisbati.",misol:"Masalan: 1 mln sarflab 200,000 foyda = 20% rentabellik."},
+  {nomi:"Diversifikatsiya",tarjima:"Xavfni kamaytirish uchun turli sohalarga sarmoya",izoh:"Diversifikatsiya — 'barcha tuxumlarni bir savatga qo'yma' tamoyili.",misol:"Masalan: Faqat bitta kompaniya emas, 10 ta turli kompaniyaga sarmoya."},
   {nomi:"Emissiya (Emission)",tarjima:"Qimmatli qog'ozlar chiqarish",izoh:"Emissiya — aksiya yoki obligatsiyalar chiqarish orqali kapital jalb qilish.",misol:"Masalan: Kompaniya IPO orqali birinchi marta aksiyalar emissiyasi qiladi."},
   {nomi:"Defolt (Default)",tarjima:"Qarzni to'lay olmaslik holati",izoh:"Defolt — qarz oluvchining majburiyatlarini bajarolmasligi.",misol:"Masalan: Argentinaning 2001-yilgi davlat defolt holati."},
   {nomi:"Subsidiya (Subsidy)",tarjima:"Davlat tomonidan beriladigan moliyaviy yordam",izoh:"Subsidiya — narxlarni past ushlab turish yoki sohani qo'llab-quvvatlash uchun davlat yordami.",misol:"Masalan: Elektr energiyasiga subsidiya — davlat haqiqiy narxning bir qismini to'laydi."},
-  {nomi:"Amortizatsiya (Amortization)",tarjima:"Aktivning qiymatini vaqt o'tishi bilan chiqarish",izoh:"Amortizatsiya — asosiy vositalar qiymatini foydalanish muddati davomida xarajatlarga o'tkazish.",misol:"Masalan: 10 mln so'mlik mashina 5 yilga = har yili 2 mln so'm xarajat."},
+  {nomi:"Amortizatsiya",tarjima:"Aktivning qiymatini vaqt o'tishi bilan chiqarish",izoh:"Amortizatsiya — asosiy vositalar qiymatini foydalanish muddati davomida xarajatlarga o'tkazish.",misol:"Masalan: 10 mln so'mlik mashina 5 yilga = har yili 2 mln so'm xarajat."},
   {nomi:"Lizing (Leasing)",tarjima:"Mulkni ijaraga berish",izoh:"Lizing — mulkni muayyan to'lov evaziga foydalanishga berish.",misol:"Masalan: Avtomobil lizingi — mashina narxini to'liq to'lamasdan oylik to'lov."},
   {nomi:"Faktoring (Factoring)",tarjima:"Debitorlik qarzlarini sotish",izoh:"Faktoring — kelajakdagi tushumlarni chegirma bilan faktorga sotish.",misol:"Masalan: 30 kunda 100 mln kelishi kerak, lekin hozir kerak — 95 mlnga sotasiz."},
-  {nomi:"Franchayzing (Franchising)",tarjima:"Brend va biznes modelini litsenziya asosida berish",izoh:"Franchayzing — muvaffaqiyatli biznes modelini boshqa tadbirkorlarga to'lov evaziga berish.",misol:"Masalan: McDonald's, Subway — franchayzing orqali tarqalgan."},
-  {nomi:"Bozor kapitalizatsiyasi (Market Cap)",tarjima:"Kompaniyaning bozor qiymati",izoh:"Bozor kapitalizatsiyasi = Aksiyalar soni × Aksiya narxi.",misol:"Masalan: Apple 1 trillion dollar market cap — dunyo eng qimmat kompaniyasi."},
-  {nomi:"Likvidatsiya (Liquidation)",tarjima:"Kompaniyani yopish va aktivlarni sotish",izoh:"Likvidatsiya — kompaniya to'lovga qodir bo'lmaganda aktivlar sotiladi.",misol:"Masalan: Bankrot kompaniya aktivlari kim oshdi savdosida sotiladi."},
-  {nomi:"Forvard shartnoma (Forward)",tarjima:"Kelajakdagi sanada belgilangan narxda sotib olish",izoh:"Forvard — kelajakdagi sanada ma'lum narxda aktiv sotib olish/sotish majburiyati.",misol:"Masalan: Fermer hosilni 6 oydan keyin belgilangan narxda sotish forvardi."},
+  {nomi:"Franchayzing",tarjima:"Brend va biznes modelini litsenziya asosida berish",izoh:"Franchayzing — muvaffaqiyatli biznes modelini boshqa tadbirkorlarga to'lov evaziga berish.",misol:"Masalan: McDonald's, Subway — franchayzing orqali tarqalgan."},
+  {nomi:"Bozor kapitalizatsiyasi",tarjima:"Kompaniyaning bozor qiymati",izoh:"Bozor kapitalizatsiyasi = Aksiyalar soni × Aksiya narxi.",misol:"Masalan: Apple 1 trillion dollar market cap — dunyo eng qimmat kompaniyasi."},
+  {nomi:"Likvidatsiya",tarjima:"Kompaniyani yopish va aktivlarni sotish",izoh:"Likvidatsiya — kompaniya to'lovga qodir bo'lmaganda aktivlar sotiladi.",misol:"Masalan: Bankrot kompaniya aktivlari kim oshdi savdosida sotiladi."},
+  {nomi:"Forvard shartnoma",tarjima:"Kelajakdagi sanada belgilangan narxda sotib olish",izoh:"Forvard — kelajakdagi sanada ma'lum narxda aktiv sotib olish/sotish majburiyati.",misol:"Masalan: Fermer hosilni 6 oydan keyin belgilangan narxda sotish forvardi."},
   {nomi:"Fyuchers (Futures)",tarjima:"Birjadagi standartlashtirilgan kelajakdagi shartnoma",izoh:"Fyuchers — forvardga o'xshash, lekin birjada standartlashtirilgan shartnomalar.",misol:"Masalan: Neft fyuchersi — kelgusi oyda ma'lum narxda neft olish majburiyati."},
   {nomi:"Opsion (Option)",tarjima:"Aktivni belgilangan narxda sotib olish huquqi",izoh:"Opsion — ma'lum narxda aktiv sotib olish (call) yoki sotish (put) huquqi, majburiyat emas.",misol:"Masalan: Call opsion: aksiyani 100$ da sotib olish huquqi. Narx 120$ bo'lsa foyda."},
-  {nomi:"Kapital bozori (Capital Market)",tarjima:"Uzoq muddatli moliyaviy vositalar bozori",izoh:"Kapital bozori — aksiya va obligatsiyalar kabi uzoq muddatli instrumentlar savdosi.",misol:"Masalan: Toshkent fond birjasi O'zbekistondagi kapital bozori."},
-  {nomi:"Pul bozori (Money Market)",tarjima:"Qisqa muddatli kredit operatsiyalari bozori",izoh:"Pul bozori — 1 yilgacha muddatli moliyaviy vositalar savdosi amalga oshiriladigan bozor.",misol:"Masalan: Banklar bir-biridan qisqa muddatga qarz oladi — pul bozori operatsiyasi."},
+  {nomi:"Kapital bozori",tarjima:"Uzoq muddatli moliyaviy vositalar bozori",izoh:"Kapital bozori — aksiya va obligatsiyalar kabi uzoq muddatli instrumentlar savdosi.",misol:"Masalan: Toshkent fond birjasi O'zbekistondagi kapital bozori."},
+  {nomi:"Pul bozori",tarjima:"Qisqa muddatli kredit operatsiyalari bozori",izoh:"Pul bozori — 1 yilgacha muddatli moliyaviy vositalar savdosi amalga oshiriladigan bozor.",misol:"Masalan: Banklar bir-biridan qisqa muddatga qarz oladi — pul bozori operatsiyasi."},
   {nomi:"Xedjing (Hedging)",tarjima:"Xavfni kamaytirish uchun himoya pozitsiyasi",izoh:"Xedjing — moliyaviy yo'qotishlardan himoyalanish uchun qarama-qarshi pozitsiya ochish.",misol:"Masalan: Dollar tushib ketishidan himoya uchun put opsion sotib olish."}
 ];
 
 function bugunKalit(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+function kunKalit(y,m,d){return y+"-"+m+"-"+d}
 function saqlash(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function olish(k){var m=localStorage.getItem(k);return m?JSON.parse(m):null}
 
@@ -402,23 +450,15 @@ function bandQosh(matn,bajarildiMi,guruh){
   var band=document.createElement("li");
   if(bajarildiMi)band.classList.add("bajarildi");
   band.dataset.guruh=guruh;
-
   var tick=document.createElement("div");
-  tick.className="tick";
-  tick.textContent="✓";
+  tick.className="tick";tick.textContent="✓";
   tick.onclick=function(e){
     e.stopPropagation();
     band.classList.toggle("bajarildi");
-    vazifalarSaqla();
-    progressYangilansin();
+    vazifalarSaqla();progressYangilansin();
   };
-
-  var nom=document.createElement("span");
-  nom.className="nom";
-  nom.textContent=matn;
-
-  band.appendChild(tick);
-  band.appendChild(nom);
+  var nom=document.createElement("span");nom.className="nom";nom.textContent=matn;
+  band.appendChild(tick);band.appendChild(nom);
   royxat.appendChild(band);
 }
 
@@ -428,8 +468,7 @@ function qosh(){
   if(matn=="")return;
   bandQosh(matn,false,guruh);
   document.getElementById("vazifa").value="";
-  vazifalarSaqla();
-  progressYangilansin();
+  vazifalarSaqla();progressYangilansin();
 }
 
 function vazifalarSaqla(){
@@ -473,6 +512,58 @@ function congratsYop(){
   document.getElementById("overlay").classList.remove("show");
 }
 
+function modalYop(){
+  document.getElementById("congrats").classList.remove("show");
+  document.getElementById("kun-modal").classList.remove("show");
+  document.getElementById("overlay").classList.remove("show");
+}
+
+function kunModalKorsatish(yil,oy,kun){
+  var k=kunKalit(yil,oy,kun);
+  var vazifalar=olish("vazifalar_"+k)||[];
+  var f=olish("progress_"+k)||0;
+  var h=vazifalar.length;
+  var b=vazifalar.filter(function(v){return v.bajarildi}).length;
+
+  var oyNomi=OYLAR[oy-1];
+  document.getElementById("modal-sana").textContent=kun+" "+oyNomi+" "+yil;
+  document.getElementById("modal-foiz").textContent=f+"%";
+  document.getElementById("modal-foiz").style.color=f>=100?"#27ae60":f>0?"#f39c12":"#e74c3c";
+  document.getElementById("modal-bajarildi").textContent=b+" / "+h+" vazifa bajarildi";
+
+  var div=document.getElementById("modal-vazifalar");
+  div.innerHTML="";
+
+  if(vazifalar.length==0){
+    div.innerHTML="<p style='text-align:center;color:#888;font-size:14px;padding:20px'>Bu kun uchun ma'lumot yo'q</p>";
+  } else {
+    var guruhlar={ielts:"📚 IELTS",kitob:"📖 Kitob",moliya:"💰 Moliya"};
+    ["ielts","kitob","moliya"].forEach(function(g){
+      var gVazifalar=vazifalar.filter(function(v){return v.guruh==g});
+      if(gVazifalar.length>0){
+        var sarlavha=document.createElement("div");
+        sarlavha.style.cssText="font-size:12px;font-weight:bold;color:#888;padding:8px 0 4px 0;border-bottom:1px solid #eee;margin-bottom:6px;margin-top:10px";
+        sarlavha.textContent=guruhlar[g]||g;
+        div.appendChild(sarlavha);
+        gVazifalar.forEach(function(v){
+          var item=document.createElement("div");
+          item.className="modal-vazifa-item"+(v.bajarildi?" done":"");
+          item.innerHTML="<div class='m-tick'>✓</div><div class='m-nom'>"+v.matn+"</div>";
+          div.appendChild(item);
+        });
+      }
+    });
+  }
+
+  document.getElementById("kun-modal").classList.add("show");
+  document.getElementById("overlay").classList.add("show");
+}
+
+function kunModalYop(){
+  document.getElementById("kun-modal").classList.remove("show");
+  document.getElementById("overlay").classList.remove("show");
+}
+
 function writingQosh(){
   var sarlavha=document.getElementById("writing-sarlavha").value.trim();
   var rasmUrl=document.getElementById("writing-rasm-url").value.trim();
@@ -491,16 +582,14 @@ function writingQosh(){
 
 function writingKorsatish(){
   var royxat=olish("writing")||[];
-  var div=document.getElementById("writing-royxat");
-  div.innerHTML="";
+  var div=document.getElementById("writing-royxat");div.innerHTML="";
   royxat.forEach(function(w){
     var card=document.createElement("div");card.className="writing-card";
     var html="<h4>"+w.sarlavha+"</h4><p style='font-size:12px;color:#888'>📅 "+w.sana+"</p>";
     if(w.rasmUrl)html+="<img src='"+w.rasmUrl+"' style='width:100%;border-radius:8px;margin-bottom:8px;max-height:200px;object-fit:cover' onerror=\"this.style.display='none'\">";
     html+="<div class='writing-essay'>"+w.essay+"</div>";
     if(w.ball)html+="<span class='ball'>Band: "+w.ball+"</span>";
-    card.innerHTML=html;
-    div.appendChild(card);
+    card.innerHTML=html;div.appendChild(card);
   });
 }
 
@@ -525,16 +614,14 @@ function readingQosh(){
 
 function readingKorsatish(){
   var royxat=olish("reading")||[];
-  var div=document.getElementById("reading-royxat");
-  div.innerHTML="";
+  var div=document.getElementById("reading-royxat");div.innerHTML="";
   royxat.forEach(function(r,ri){
     var card=document.createElement("div");card.className="reading-card";
     var html="<h4>"+r.sarlavha+"</h4><p style='font-size:13px;color:#555;margin-bottom:10px'>"+r.matn+"</p>";
     r.savollar.forEach(function(s,si){
       html+="<div class='savol-item' id='s-"+ri+"-"+si+"'><p>"+s.savol+"</p><input type='text' placeholder='Javobingiz...' onchange='tekshir(this,\""+s.javob+"\",\"s-"+ri+"-"+si+"\")'></div>";
     });
-    card.innerHTML=html;
-    div.appendChild(card);
+    card.innerHTML=html;div.appendChild(card);
   });
 }
 
@@ -637,20 +724,61 @@ function hisobKorsatish(){
 }
 
 function oylikKorsatish(){
-  var d=new Date(),yil=d.getFullYear(),oy=d.getMonth(),bugunKun=d.getDate();
+  var d=new Date();
+  var yil=d.getFullYear();
+  var oy=d.getMonth();
+  var bugunKun=d.getDate();
   document.getElementById("oy-nomi").textContent=OYLAR[oy]+" "+yil;
+
   var kunSoni=new Date(yil,oy+1,0).getDate();
+  var birinchiKun=new Date(yil,oy,1).getDay();
+  // Dushanba = 0
+  var offset=birinchiKun==0?6:birinchiKun-1;
+
   var div=document.getElementById("kunlar");div.innerHTML="";
   var jami=0,bajarilganKun=0;
-  for(var i=1;i<=kunSoni;i++){
-    var f=olish("progress_"+yil+"-"+(oy+1)+"-"+i)||0;
-    var kun=document.createElement("div");kun.className="kun";
-    if(i==bugunKun)kun.classList.add("bugun");
-    else if(i<bugunKun){if(f>=100){kun.classList.add("bajarildi-kun");bajarilganKun++}else if(f>0)kun.classList.add("qisman");else kun.classList.add("utgan");jami++}
-    var r=document.createElement("div");r.className="kun-raqam";r.textContent=i;
-    var fd=document.createElement("div");fd.className="kun-foiz";fd.textContent=i<=bugunKun&&f>0?f+"%":"";
-    kun.appendChild(r);kun.appendChild(fd);div.appendChild(kun);
+
+  // Bo'sh kataklar
+  for(var i=0;i<offset;i++){
+    var bosh=document.createElement("div");
+    bosh.className="kun bosh";
+    div.appendChild(bosh);
   }
+
+  for(var i=1;i<=kunSoni;i++){
+    var k=kunKalit(yil,oy+1,i);
+    var f=olish("progress_"+k)||0;
+    var kun=document.createElement("div");
+    kun.className="kun";
+    var emoji="";
+
+    if(i==bugunKun){
+      kun.classList.add("bugun");
+      emoji="📌";
+    } else if(i<bugunKun){
+      if(f>=100){kun.classList.add("bajarildi-kun");emoji="✅";bajarilganKun++;}
+      else if(f>0){kun.classList.add("qisman");emoji="🔶";}
+      else{kun.classList.add("utgan");emoji="❌";}
+      jami++;
+    }
+
+    var r=document.createElement("div");r.className="kun-raqam";r.textContent=i;
+    var fd=document.createElement("div");fd.className="kun-foiz";
+    fd.textContent=f>0?f+"%":"";
+    var em=document.createElement("div");em.className="kun-emoji";em.textContent=emoji;
+
+    kun.appendChild(r);
+    if(f>0||i==bugunKun)kun.appendChild(fd);
+    kun.appendChild(em);
+
+    // Bosganingizda vazifalar chiqsin
+    (function(yy,mm,dd){
+      kun.onclick=function(){kunModalKorsatish(yy,mm+1,dd)};
+    })(yil,oy,i);
+
+    div.appendChild(kun);
+  }
+
   document.getElementById("oylik-foiz").textContent=(jami==0?0:Math.round(bajarilganKun/jami*100))+"%";
 }
 
